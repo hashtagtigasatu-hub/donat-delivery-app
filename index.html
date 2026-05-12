@@ -172,15 +172,17 @@
 
     </div>
 
-    <div class="card">
+   <div class="card">
 
-      <button class="btn btn-primary">
-        Generate Queue
-      </button>
+  <button
+    class="btn btn-primary"
+    onclick="generateQueue()">
+    Generate Queue
+  </button>
 
-      <div id="queueContainer"></div>
+</div>
 
-    </div>
+<div id="queueContainer"></div>
 
   </div>
 
@@ -223,7 +225,7 @@ async function saveCustomer(){
     const result =
       await response.json();
 
-    alert(result);
+    alert(result.message);
 
   }catch(err){
 
