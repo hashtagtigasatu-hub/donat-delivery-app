@@ -64,11 +64,16 @@
     .input{
       width:100%;
       border:none;
-      background:#f3f4f6;
+      background:#ffe4ef; /* pink muda */
       padding:18px;
       border-radius:16px;
       font-size:16px;
       margin-top:12px;
+    }
+
+    .input:focus{
+     background:#ffd6e7;
+     box-shadow:0 0 0 3px rgba(251, 207, 232, 0.6);
     }
 
     textarea{
@@ -88,7 +93,7 @@
     }
 
     .btn-primary{
-      background:black;
+      background:#8b5e3c; /* cokelat */
       color:white;
     }
 
@@ -125,11 +130,20 @@
     }
 
     .maps-btn{
-      background:#dbeafe;
+      background:#fbcfe8; /* pink muda */
+      color:#111;
     }
 
     .wa-btn{
-      background:#dcfce7;
+      background:#f9a8d4; /* pink muda lebih kuat sedikit */
+      color:#111;
+    }
+
+    .btn-primary:hover,
+    .maps-btn:hover,
+    .wa-btn:hover{
+    transform:scale(1.02);
+    opacity:0.9;
     }
 
     #loadingOverlay{
