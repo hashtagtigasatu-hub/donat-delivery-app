@@ -405,7 +405,7 @@ const API_URL =
       </button>
 
       <button class="action-btn wa-btn"
-        onclick="openWA('${item.wa}','${item.nama}')"
+        onclick="openWA('${item.wa}','${item.urutan}','${item.nama}')"
         WhatsApp
       </button>
 
@@ -441,12 +441,12 @@ function hideLoading(){
   window.open(url, '_blank');
 }
 
-function openWA(number, queue){
+function openWA(number, queue, name){
 
   const msg = [
     `Halo Kak ${name},`,
     ``,
-    `pesanan donat sedang dalam proses pengantaran, pastikan Kakak ada ditempat yaa 🍩`,
+    `Pesanan donat sedang dalam proses pengantaran, pastikan Kakak ada ditempat yaa 🍩`,
     `Nomor antrian: #${queue}`,
     ``,
     `Terima kasih 🙏`
