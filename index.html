@@ -14,7 +14,7 @@
       user-scalable=no
     ">
 
-  <title>Donat Delivery</title>
+  <title>Donat Tetangga</title>
 
   <style>
 
@@ -190,7 +190,7 @@
 
   <div class="header">
     <div class="title">
-      Donat Delivery 🍩
+      Donat Tetangga 🍩
     </div>
   </div>
 
@@ -456,6 +456,67 @@ async function saveCustomer(){
 
   loadQueue();
 
+};
+
+    let html = '';
+
+  data.forEach(function(item){
+
+    html += `
+      <div class="queue-item">
+
+        <div class="queue-title">
+          #${item.urutan} ${item.nama}
+        </div>
+
+        <div class="queue-distance">
+          ${item.distance} KM
+        </div>
+
+        <div class="action-row">
+
+          <button class="primary" onclick="openMaps('${item.lat}','${item.lng}')">
+            Maps
+          </button>
+
+          <button class="secondary"
+            onclick="openWA('${item.wa}','${item.nama}')">
+            WA
+          </button>
+
+        </div>
+
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+function openMaps(lat, lng){
+
+  const url =
+    'https://www.google.com/maps/search/?api=1&query='
+    + lat + ',' + lng;
+
+  window.open(url, '_blank');
+}
+
+function openWA(wa, name){
+
+  const text =
+    'Halo ' + name +
+    ', pesanan donat sedang dalam perjalanan 🍩';
+
+  const url =
+    'https://wa.me/' + wa +
+    '?text=' + encodeURIComponent(text);
+
+  window.open(url, '_blank');
+}
+
+window.onload = function(){
+  loadQueue();
 };
 
     function showLoading(){
