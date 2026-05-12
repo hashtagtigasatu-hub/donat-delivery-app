@@ -167,7 +167,7 @@
       <button
         class="btn btn-primary"
         onclick="saveCustomer()">
-        Simpan Customer
+        Submit
       </button>
 
     </div>
@@ -175,32 +175,8 @@
     <div class="card">
 
       <button class="btn btn-primary">
-        Generate Delivery Queue
+        Generate Queue
       </button>
-
-    </div>
-
-    <div class="queue-item">
-
-      <div class="queue-title">
-        #1 Budi
-      </div>
-
-      <div class="queue-distance">
-        2.4 KM
-      </div>
-
-      <div class="action-row">
-
-        <button class="action-btn maps-btn">
-          Maps
-        </button>
-
-        <button class="action-btn wa-btn">
-          WhatsApp
-        </button>
-
-      </div>
 
     </div>
 
@@ -250,6 +226,36 @@ async function saveCustomer(){
   }catch(err){
 
     alert('Gagal koneksi');
+
+    console.log(err);
+
+  }
+
+}
+  async function generateQueue(){
+
+  try{
+
+    const response =
+      await fetch(
+        API_URL + '?action=generateQueue',
+        {
+          method:'POST',
+          headers:{
+            'Content-Type':'text/plain'
+          },
+          body:JSON.stringify({})
+        }
+      );
+
+    const result =
+      await response.json();
+
+    alert(result.message);
+
+  }catch(err){
+
+    alert('Gagal generate queue');
 
     console.log(err);
 
