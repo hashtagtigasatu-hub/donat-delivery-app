@@ -241,55 +241,6 @@
 const API_URL =
 'https://script.google.com/macros/s/AKfycbwIxvVvK5RXnBmHukkZSelM25GssapmQ6a7a-CInUCae1hehXGv9fte2QifAmLsepEpPQ/exec';
 
-async function saveCustomer(){
-
-  const inputs =
-    document.querySelectorAll('.input');
-
-  const data = {
-
-    nama: inputs[0].value,
-    wa: inputs[1].value,
-    alamat: inputs[2].value,
-    maps: inputs[3].value
-
-  };
-
-  showLoading();
-
-  try{
-
-    const response =
-      await fetch(
-        API_URL + '?action=saveCustomer',
-        {
-          method:'POST',
-
-          headers:{
-            'Content-Type':'text/plain'
-          },
-
-          body:JSON.stringify(data)
-
-        }
-      );
-
-    const result =
-      await response.json();
-
-    hideLoading();
-    alert(result.message);
-
-    hideLoading();
-  }catch(err){
-
-    alert('Gagal koneksi');
-
-    console.log(err);
-
-  }
-
-}
   async function saveCustomer(){
 
   const inputs =
@@ -326,10 +277,12 @@ async function saveCustomer(){
     const result =
       await response.json();
 
+    hideLoading();
     alert(result.message);
 
     loadQueue();
 
+    hideLoading();
   }catch(err){
 
     alert('Gagal koneksi');
