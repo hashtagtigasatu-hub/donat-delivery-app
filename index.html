@@ -178,6 +178,8 @@
         Generate Queue
       </button>
 
+      <div id="queueContainer"></div>
+
     </div>
 
   </div>
@@ -241,9 +243,11 @@ async function saveCustomer(){
         API_URL + '?action=generateQueue',
         {
           method:'POST',
+
           headers:{
             'Content-Type':'text/plain'
           },
+
           body:JSON.stringify({})
         }
       );
@@ -252,6 +256,8 @@ async function saveCustomer(){
       await response.json();
 
     alert(result.message);
+
+    loadQueue(); // ← PENTING
 
   }catch(err){
 
@@ -262,6 +268,80 @@ async function saveCustomer(){
   }
 
 }
+
+    async function loadQueue(){
+
+  try{
+
+    const response =
+      await fetch(
+        API_URL + '?action=getQueue',
+        {
+          method:'POST',
+
+          headers:{
+            'Content-Type':'text/plain'
+          },
+
+          body:JSON.stringify({})
+        }
+      );
+
+    const data =
+      await response.json();
+
+    renderQueue(data);
+
+  }catch(err){
+
+    console.log(err);
+
+  }
+
+}
+
+    function renderQueue(data){
+
+  const container =
+    document.getElementById('queueContainer');
+
+  if(!data || data.length === 0){
+
+    container.innerHTML =
+      '<p>Tidak ada queue</p>';
+
+    return;
+  }
+
+  let html = '';
+
+  data.forEach(item => {
+
+    html += `
+
+      <div class="queue-item">
+
+        <div class="queue-title">
+          #${item.urutan} ${item.nama}
+        </div>
+
+        <div class="queue-distance">
+          ${item.distance} KM
+        </div>
+
+      </div>
+
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+    window.onload = function(){
+
+  loadQueue();
+
+};
 
 </script>
 
