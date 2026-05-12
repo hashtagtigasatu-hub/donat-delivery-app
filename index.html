@@ -281,8 +281,8 @@ const API_URL =
     alert(result.message);
 
     loadQueue();
-
-    hideLoading();
+    inputs.forEach(i => i.value = '');
+    inputs[0].focus();
   }catch(err){
 
     alert('Gagal koneksi');
@@ -448,26 +448,7 @@ function openWA(number, queue){
   const waUrl = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
 
   window.open(waUrl, '_blank');
-}
-
-  function generateQueue(){
-
-  const props = PropertiesService.getScriptProperties();
-  const lock = props.getProperty('QUEUE_LOCK');
-
-  if(lock == '1'){
-    return 'Queue sedang diproses...';
-  }
-
-  props.setProperty('QUEUE_LOCK','1');
-
-  try {
-    ...
-    return 'Queue berhasil dibuat';
-  } finally {
-    props.deleteProperty('QUEUE_LOCK');
-  }
-}  
+} 
 
 </script>
 
