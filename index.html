@@ -403,12 +403,12 @@ const API_URL =
     <div class="action-row">
 
       <button class="action-btn maps-btn"
-        onclick="openMaps('${item.maps}')">
+        onclick='openMaps(${JSON.stringify(item.maps)})'>
         Maps
       </button>
 
       <button class="action-btn wa-btn"
-        onclick="openWA(${JSON.stringify(item.wa)}, ${JSON.stringify(item.urutan)}, ${JSON.stringify(item.nama)})">
+        onclick='openWA(${JSON.stringify(item.wa)}, ${JSON.stringify(item.urutan)}, ${JSON.stringify(item.nama)})'>
         WhatsApp
       </button>
 
