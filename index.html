@@ -164,7 +164,9 @@
         class="input"
         placeholder="Link Google Maps">
 
-      <button class="btn btn-primary">
+      <button
+        class="btn btn-primary"
+        onclick="saveCustomer()">
         Simpan Customer
       </button>
 
@@ -203,6 +205,53 @@
     </div>
 
   </div>
+
+  <script>
+
+const API_URL =
+'PASTE_WEB_APP_URL_DISINI';
+
+async function saveCustomer(){
+
+  const inputs =
+    document.querySelectorAll('.input');
+
+  const data = {
+
+    nama: inputs[0].value,
+    wa: inputs[1].value,
+    alamat: inputs[2].value,
+    maps: inputs[3].value
+
+  };
+
+  try{
+
+    const response =
+      await fetch(
+        API_URL + '?action=saveCustomer',
+        {
+          method:'POST',
+          body:JSON.stringify(data)
+        }
+      );
+
+    const result =
+      await response.json();
+
+    alert(result.message);
+
+  }catch(err){
+
+    alert('Gagal koneksi');
+
+    console.log(err);
+
+  }
+
+}
+
+</script>
 
 </body>
 
