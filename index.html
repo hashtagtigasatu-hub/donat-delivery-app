@@ -132,6 +132,56 @@
       background:#dcfce7;
     }
 
+    #loadingOverlay{
+
+  position:fixed;
+  inset:0;
+
+  background:rgba(255,255,255,0.9);
+
+  display:none;
+
+  justify-content:center;
+  align-items:center;
+
+  z-index:99999;
+}
+
+.loader-box{
+
+  text-align:center;
+}
+
+.spinner{
+
+  width:56px;
+  height:56px;
+
+  border:5px solid #e5e7eb;
+  border-top:5px solid black;
+
+  border-radius:50%;
+
+  animation:spin 1s linear infinite;
+
+  margin:auto;
+}
+
+.loading-text{
+
+  margin-top:16px;
+  font-size:16px;
+  font-weight:bold;
+}
+
+@keyframes spin{
+
+  100%{
+    transform:rotate(360deg);
+  }
+
+}
+
   </style>
 
 </head>
@@ -205,6 +255,57 @@ async function saveCustomer(){
 
   };
 
+  showLoading();
+
+  try{
+
+    const response =
+      await fetch(
+        API_URL + '?action=saveCustomer',
+        {
+          method:'POST',
+
+          headers:{
+            'Content-Type':'text/plain'
+          },
+
+          body:JSON.stringify(data)
+
+        }
+      );
+
+    const result =
+      await response.json();
+
+    hideLoading();
+    alert(result.message);
+
+    hideLoading();
+  }catch(err){
+
+    alert('Gagal koneksi');
+
+    console.log(err);
+
+  }
+
+}
+  async function saveCustomer(){
+
+  const inputs =
+    document.querySelectorAll('.input');
+
+  const data = {
+
+    nama: inputs[0].value,
+    wa: inputs[1].value,
+    alamat: inputs[2].value,
+    maps: inputs[3].value
+
+  };
+
+  showLoading();
+
   try{
 
     const response =
@@ -227,16 +328,25 @@ async function saveCustomer(){
 
     alert(result.message);
 
+    loadQueue();
+
   }catch(err){
 
     alert('Gagal koneksi');
 
     console.log(err);
 
+  }finally{
+
+    hideLoading();
+
   }
 
 }
-  async function generateQueue(){
+
+    async function generateQueue(){
+
+  showLoading();
 
   try{
 
@@ -259,13 +369,17 @@ async function saveCustomer(){
 
     alert(result.message);
 
-    loadQueue(); // ← PENTING
+    loadQueue();
 
   }catch(err){
 
     alert('Gagal generate queue');
 
     console.log(err);
+
+  }finally{
+
+    hideLoading();
 
   }
 
@@ -338,14 +452,36 @@ async function saveCustomer(){
 
   container.innerHTML = html;
 }
-
     window.onload = function(){
 
   loadQueue();
 
 };
 
+    function showLoading(){
+
+  document
+    .getElementById('loadingOverlay')
+    .style.display = 'flex';
+}
+
+function hideLoading(){
+
+  document
+    .getElementById('loadingOverlay')
+    .style.display = 'none';
+}
+
 </script>
+
+  <div id="loadingOverlay">
+  <div class="loader-box">
+    <div class="spinner"></div>
+    <div class="loading-text">
+      Loading...
+    </div>
+  </div>
+</div>
 
 </body>
 
