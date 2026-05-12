@@ -387,20 +387,32 @@ const API_URL =
   data.forEach(item => {
 
     html += `
+  <div class="queue-item">
 
-      <div class="queue-item">
+    <div class="queue-title">
+      #${item.urutan} ${item.nama}
+    </div>
 
-        <div class="queue-title">
-          #${item.urutan} ${item.nama}
-        </div>
+    <div class="queue-distance">
+      ${item.distance} KM
+    </div>
 
-        <div class="queue-distance">
-          ${item.distance} KM
-        </div>
+    <div class="action-row">
 
-      </div>
+      <button class="action-btn maps-btn"
+        onclick="openMaps('${item.maps}')">
+        Maps
+      </button>
 
-    `;
+      <button class="action-btn wa-btn"
+        onclick="openWA('${item.wa}','${item.urutan}')">
+        WhatsApp
+      </button>
+
+    </div>
+
+  </div>
+`;
   });
 
   container.innerHTML = html;
@@ -424,6 +436,38 @@ function hideLoading(){
     .getElementById('loadingOverlay')
     .style.display = 'none';
 }
+
+  function openMaps(url){
+  window.open(url, '_blank');
+}
+
+function openWA(number, queue){
+
+  const msg = `Halo, pesanan kamu #${queue} sedang diproses 🍩`;
+
+  const waUrl = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
+
+  window.open(waUrl, '_blank');
+}
+
+  function generateQueue(){
+
+  const props = PropertiesService.getScriptProperties();
+  const lock = props.getProperty('QUEUE_LOCK');
+
+  if(lock == '1'){
+    return 'Queue sedang diproses...';
+  }
+
+  props.setProperty('QUEUE_LOCK','1');
+
+  try {
+    ...
+    return 'Queue berhasil dibuat';
+  } finally {
+    props.deleteProperty('QUEUE_LOCK');
+  }
+}  
 
 </script>
 
