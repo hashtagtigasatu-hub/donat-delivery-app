@@ -320,7 +320,10 @@ const API_URL =
     const result =
       await response.json();
 
-    alert(result.message);
+    alert(typeof result.message === 'Generated'
+  ? JSON.stringify(result.message)
+  : result.message
+);
 
     loadQueue();
 
