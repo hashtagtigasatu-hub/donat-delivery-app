@@ -441,6 +441,17 @@ function hideLoading(){
 }
 
   function openMaps(url){
+
+  if(!url){
+    alert('Maps tidak tersedia');
+    return;
+  }
+
+  // kalau belum ada https
+  if(!url.startsWith('http')){
+    url = 'https://' + url;
+  }
+
   window.open(url, '_blank');
 }
 
