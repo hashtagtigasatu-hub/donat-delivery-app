@@ -28,15 +28,13 @@
       background:#f3f4f6;
       font-family:Arial,sans-serif;
       color:#111;
-
       max-width:480px;
       margin:auto;
-
       min-height:100vh;
     }
 
     .header{
-      background:#ffe4ef; /* pink muda */
+      background:#ffe4ef;
       padding:20px;
       position:sticky;
       top:0;
@@ -64,7 +62,7 @@
     .input{
       width:100%;
       border:none;
-      background:#ffe4ef; /* pink muda */
+      background:#ffe4ef;
       padding:18px;
       border-radius:16px;
       font-size:16px;
@@ -72,8 +70,8 @@
     }
 
     .input:focus{
-     background:#ffd6e7;
-     box-shadow:0 0 0 3px rgba(251, 207, 232, 0.6);
+      background:#ffd6e7;
+      box-shadow:0 0 0 3px rgba(251,207,232,0.6);
     }
 
     textarea{
@@ -93,7 +91,7 @@
     }
 
     .btn-primary{
-      background:#8b5e3c; /* cokelat */
+      background:#8b5e3c;
       color:white;
     }
 
@@ -102,6 +100,12 @@
       border-radius:20px;
       padding:18px;
       margin-bottom:14px;
+      transition: opacity 0.4s, transform 0.4s;
+    }
+
+    .queue-item.removing{
+      opacity:0;
+      transform:scale(0.95);
     }
 
     .queue-title{
@@ -130,128 +134,186 @@
     }
 
     .maps-btn{
-      background:#f9a8d4; /* pink muda */
+      background:#f9a8d4;
       color:#111;
     }
 
     .wa-btn{
-      background:#f9a8d4; /* pink muda */
+      background:#f9a8d4;
       color:#111;
+    }
+
+    /* ── TOMBOL SELESAI ── */
+    .done-btn{
+      background:#d1fae5;
+      color:#065f46;
     }
 
     .btn-primary:hover,
     .maps-btn:hover,
-    .wa-btn:hover{
-    transform:scale(1.02);
-    opacity:0.9;
+    .wa-btn:hover,
+    .done-btn:hover{
+      transform:scale(1.02);
+      opacity:0.9;
     }
 
+    /* ── MODAL REPEAT ORDER ── */
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.4);
+      display:none;
+      justify-content:center;
+      align-items:flex-end;
+      z-index:9999;
+    }
+
+    .modal-overlay.open{
+      display:flex;
+    }
+
+    .modal-box{
+      background:white;
+      border-radius:28px 28px 0 0;
+      padding:24px 20px;
+      width:100%;
+      max-width:480px;
+      max-height:70vh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .modal-title{
+      font-size:18px;
+      font-weight:bold;
+      margin-bottom:14px;
+    }
+
+    .modal-search{
+      width:100%;
+      border:none;
+      background:#ffe4ef;
+      padding:14px 18px;
+      border-radius:14px;
+      font-size:15px;
+      margin-bottom:12px;
+    }
+
+    .modal-search:focus{
+      background:#ffd6e7;
+      box-shadow:0 0 0 3px rgba(251,207,232,0.6);
+      outline:none;
+    }
+
+    .customer-list{
+      overflow-y:auto;
+      flex:1;
+    }
+
+    .customer-item{
+      padding:14px 16px;
+      border-radius:14px;
+      cursor:pointer;
+      margin-bottom:8px;
+      background:#f9fafb;
+      transition:background 0.15s;
+    }
+
+    .customer-item:hover{
+      background:#ffe4ef;
+    }
+
+    .customer-item-name{
+      font-weight:bold;
+      font-size:15px;
+    }
+
+    .customer-item-addr{
+      font-size:13px;
+      color:#666;
+      margin-top:2px;
+    }
+
+    .modal-close{
+      margin-top:14px;
+      width:100%;
+      border:none;
+      padding:14px;
+      border-radius:14px;
+      font-weight:bold;
+      cursor:pointer;
+      background:#f3f4f6;
+      color:#555;
+    }
+
+    /* ── LOADING OVERLAY ── */
     #loadingOverlay{
+      position:fixed;
+      inset:0;
+      background:rgba(255,255,255,0.9);
+      display:none;
+      justify-content:center;
+      align-items:center;
+      z-index:99999;
+    }
 
-  position:fixed;
-  inset:0;
-
-  background:rgba(255,255,255,0.9);
-
-  display:none;
-
-  justify-content:center;
-  align-items:center;
-
-  z-index:99999;
-}
-
-.loader-box{
-
-  text-align:center;
-}
-
-.spinner{
-
-  width:56px;
-  height:56px;
-
-  border:5px solid #f3d6c1; /* warna krem donat */
-  border-top:5px solid #8b5e3c; /* cokelat donat */
-
-  border-radius:50%;
-
-  box-shadow:0 0 12px rgba(139, 94, 60, 0.3);
-
-  animation:spin 1s linear infinite;
-
-  margin:auto;
-}
-
-.loading-text{
-
-  margin-top:16px;
-  font-size:16px;
-  font-weight:bold;
-}
-
-@keyframes spin{
-
-  100%{
-    transform:rotate(360deg);
-  }
-
-}
+    .loader-box{
+      text-align:center;
+    }
 
     .donut-loader{
-  position:relative;
-  width:70px;
-  height:70px;
-  margin:auto;
-}
+      position:relative;
+      width:70px;
+      height:70px;
+      margin:auto;
+    }
 
-/* DONAT */
-.donut{
-  width:100%;
-  height:100%;
-  background:#8b5e3c;
-  border-radius:50%;
-  position:relative;
-}
+    .donut{
+      width:100%;
+      height:100%;
+      background:#8b5e3c;
+      border-radius:50%;
+      position:relative;
+    }
 
-/* lubang donat */
-.donut::after{
-  content:"";
-  position:absolute;
-  width:28px;
-  height:28px;
-  background:#ffe4ef;
-  border-radius:50%;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-}
+    .donut::after{
+      content:"";
+      position:absolute;
+      width:28px;
+      height:28px;
+      background:#ffe4ef;
+      border-radius:50%;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+    }
 
-/* SPRINKLE */
-.sprinkle{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:#f9a8d4;
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform-origin:0 -28px;
-  animation:spin 1.2s linear infinite;
-}
+    .sprinkle{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:#f9a8d4;
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform-origin:0 -28px;
+      animation:spin 1.2s linear infinite;
+    }
 
-/* posisi sprinkle */
-.s1{ transform:rotate(0deg) translateY(-30px); }
-.s2{ transform:rotate(90deg) translateY(-30px); }
-.s3{ transform:rotate(180deg) translateY(-30px); }
-.s4{ transform:rotate(270deg) translateY(-30px); }
+    .s1{ transform:rotate(0deg) translateY(-30px); }
+    .s2{ transform:rotate(90deg) translateY(-30px); }
+    .s3{ transform:rotate(180deg) translateY(-30px); }
+    .s4{ transform:rotate(270deg) translateY(-30px); }
 
-/* animasi putar */
-@keyframes spin{
-  100%{
-    transform:rotate(360deg);
-  }
-}
+    @keyframes spin{
+      100%{ transform:rotate(360deg); }
+    }
+
+    .loading-text{
+      margin-top:16px;
+      font-size:16px;
+      font-weight:bold;
+    }
 
   </style>
 
@@ -260,275 +322,316 @@
 <body>
 
   <div class="header">
-    <div class="title">
-      Donat Tetangga 🍩
-    </div>
+    <div class="title">Donat Tetangga 🍩</div>
   </div>
 
   <div class="container">
 
+    <!-- Form Input Customer Baru -->
     <div class="card">
-
-      <input
-        class="input"
-        placeholder="Nama Customer">
-
-      <input
-        class="input"
-        placeholder="Nomor WhatsApp">
-
-      <textarea
-        class="input"
-        placeholder="Alamat"></textarea>
-
-      <input
-        class="input"
-        placeholder="Link Google Maps">
-
-      <button
-        class="btn btn-primary"
-        onclick="saveCustomer()">
-        Submit
-      </button>
-
+      <input class="input" id="inputNama" placeholder="Nama Customer">
+      <input class="input" id="inputWA" placeholder="Nomor WhatsApp">
+      <textarea class="input" id="inputAlamat" placeholder="Alamat"></textarea>
+      <input class="input" id="inputMaps" placeholder="Link Google Maps">
+      <button class="btn btn-primary" onclick="saveCustomer()">Submit</button>
     </div>
 
-   <div class="card">
+    <!-- Tombol Generate Queue + Repeat Order -->
+    <div class="card">
+      <button class="btn btn-primary" onclick="generateQueue()">Generate Queue</button>
+      <button class="btn" style="background:#ffe4ef;color:#8b5e3c;margin-top:10px;" onclick="openRepeatModal()">
+        + Repeat Order Customer Lama
+      </button>
+    </div>
 
-  <button
-    class="btn btn-primary"
-    onclick="generateQueue()">
-    Generate Queue
-  </button>
+    <div id="queueContainer"></div>
 
-</div>
+  </div>
 
-<div id="queueContainer"></div>
+  <!-- Modal Repeat Order -->
+  <div class="modal-overlay" id="repeatModal" onclick="closeRepeatModalIfOutside(event)">
+    <div class="modal-box">
+      <div class="modal-title">Pilih Customer Repeat Order 🔁</div>
+      <input
+        class="modal-search"
+        id="customerSearch"
+        placeholder="Cari nama customer..."
+        oninput="filterCustomers()"
+      >
+      <div class="customer-list" id="customerList">
+        <p style="color:#aaa;text-align:center;">Loading...</p>
+      </div>
+      <button class="modal-close" onclick="closeRepeatModal()">Tutup</button>
+    </div>
+  </div>
 
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay">
+    <div class="loader-box">
+      <div class="donut-loader">
+        <div class="donut"></div>
+        <div class="sprinkle s1"></div>
+        <div class="sprinkle s2"></div>
+        <div class="sprinkle s3"></div>
+        <div class="sprinkle s4"></div>
+      </div>
+      <div class="loading-text">Donaaat</div>
+    </div>
   </div>
 
   <script>
 
-const API_URL =
-'https://script.google.com/macros/s/AKfycbwIxvVvK5RXnBmHukkZSelM25GssapmQ6a7a-CInUCae1hehXGv9fte2QifAmLsepEpPQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwIxvVvK5RXnBmHukkZSelM25GssapmQ6a7a-CInUCae1hehXGv9fte2QifAmLsepEpPQ/exec';
 
-  async function saveCustomer(){
+let allCustomers = []; // cache untuk modal repeat order
 
-  const inputs =
-    document.querySelectorAll('.input');
+// ─────────────────────────────────────────────
+// SIMPAN CUSTOMER BARU
+// ─────────────────────────────────────────────
+async function saveCustomer(){
+  const nama   = document.getElementById('inputNama').value.trim();
+  const wa     = document.getElementById('inputWA').value.trim();
+  const alamat = document.getElementById('inputAlamat').value.trim();
+  const maps   = document.getElementById('inputMaps').value.trim();
 
-  const data = {
-
-    nama: inputs[0].value,
-    wa: inputs[1].value,
-    alamat: inputs[2].value,
-    maps: inputs[3].value
-
-  };
-
-  showLoading();
-
-  try{
-
-    const response =
-      await fetch(
-        API_URL + '?action=saveCustomer',
-        {
-          method:'POST',
-
-          headers:{
-            'Content-Type':'text/plain'
-          },
-
-          body:JSON.stringify(data)
-
-        }
-      );
-
-    const result =
-      await response.json();
-
-    hideLoading();
-    alert(result.message);
-
-    loadQueue();
-    inputs.forEach(i => i.value = '');
-    inputs[0].focus();
-  }catch(err){
-
-    alert('Gagal koneksi');
-
-    console.log(err);
-
-  }finally{
-
-    hideLoading();
-
+  if(!nama || !wa || !alamat || !maps){
+    alert('Semua field harus diisi');
+    return;
   }
 
-}
-
-    async function generateQueue(){
-
+  const data = { nama, wa, alamat, maps };
   showLoading();
 
   try{
+    const response = await fetch(API_URL + '?action=saveCustomer', {
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify(data)
+    });
 
-    const response =
-      await fetch(
-        API_URL + '?action=generateQueue',
-        {
-          method:'POST',
+    const result = await response.json();
+    hideLoading();
+    alert(result.message || 'Berhasil disimpan');
 
-          headers:{
-            'Content-Type':'text/plain'
-          },
-
-          body:JSON.stringify({})
-        }
-      );
-
-    const result =
-      await response.json();
-
-    alert(typeof result.message === 'Generated'
-  ? JSON.stringify(result.message)
-  : result.message
-);
+    document.getElementById('inputNama').value = '';
+    document.getElementById('inputWA').value = '';
+    document.getElementById('inputAlamat').value = '';
+    document.getElementById('inputMaps').value = '';
+    document.getElementById('inputNama').focus();
 
     loadQueue();
 
   }catch(err){
+    hideLoading();
+    alert('Gagal koneksi: ' + err.message);
+    console.log(err);
+  }
+}
 
+// ─────────────────────────────────────────────
+// GENERATE QUEUE
+// ─────────────────────────────────────────────
+async function generateQueue(){
+  showLoading();
+  try{
+    const response = await fetch(API_URL + '?action=generateQueue', {
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify({})
+    });
+    const result = await response.json();
+    hideLoading();
+    alert(result.message || 'Queue dibuat');
+    loadQueue();
+  }catch(err){
+    hideLoading();
     alert('Gagal generate queue');
-
     console.log(err);
-
-  }finally{
-
-    hideLoading();
-
   }
-
 }
 
-    async function loadQueue(){
-
+// ─────────────────────────────────────────────
+// LOAD & RENDER QUEUE
+// ─────────────────────────────────────────────
+async function loadQueue(){
   try{
-
-    const response =
-      await fetch(
-        API_URL + '?action=getQueue',
-        {
-          method:'POST',
-
-          headers:{
-            'Content-Type':'text/plain'
-          },
-
-          body:JSON.stringify({})
-        }
-      );
-
-    const data =
-      await response.json();
-
+    const response = await fetch(API_URL + '?action=getQueue', {
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify({})
+    });
+    const data = await response.json();
     renderQueue(data);
-
   }catch(err){
-
     console.log(err);
-
   }
-
 }
 
-    function renderQueue(data){
-
-  const container =
-    document.getElementById('queueContainer');
+function renderQueue(data){
+  const container = document.getElementById('queueContainer');
 
   if(!data || data.length === 0){
-
-    container.innerHTML =
-      '<p>Tidak ada queue</p>';
-
+    container.innerHTML = '<p style="text-align:center;color:#aaa;">Tidak ada queue</p>';
     return;
   }
 
   let html = '';
 
   data.forEach(item => {
+    // Hanya tampilkan yang masih Pending
+    if(item.status === 'Selesai') return;
 
     html += `
-  <div class="queue-item">
-
-    <div class="queue-title">
-      #${item.urutan} ${item.nama}
-    </div>
-
-    <div class="queue-distance">
-      ${item.distance} KM
-    </div>
-
-    <div class="action-row">
-
-     <button class="action-btn maps-btn"
-      data-url="${item.maps || ''}"
-      onclick="openMaps(this.getAttribute('data-url'))">
-      Maps
-    </button>
-
-      <button class="action-btn wa-btn"
-        onclick='openWA(${JSON.stringify(item.wa)}, ${JSON.stringify(item.urutan)}, ${JSON.stringify(item.nama)})'>
-        WhatsApp
-      </button>
-
-    </div>
-
-  </div>
-`;
+      <div class="queue-item" id="qi-${item.queueID}">
+        <div class="queue-title">#${item.urutan} ${item.nama}</div>
+        <div class="queue-distance">${item.distance} KM</div>
+        <div class="action-row">
+          <button class="action-btn maps-btn"
+            data-url="${item.maps || ''}"
+            onclick="openMaps(this.getAttribute('data-url'))">
+            Maps
+          </button>
+          <button class="action-btn wa-btn"
+            onclick='openWA(${JSON.stringify(item.wa)}, ${JSON.stringify(item.urutan)}, ${JSON.stringify(item.nama)})'>
+            WhatsApp
+          </button>
+          <button class="action-btn done-btn"
+            onclick='markDone(${JSON.stringify(item.queueID)})'>
+            ✓ Selesai
+          </button>
+        </div>
+      </div>
+    `;
   });
 
-  container.innerHTML = html;
-}
-    window.onload = function(){
-
-  loadQueue();
-
-};
-
-    function showLoading(){
-
-  document
-    .getElementById('loadingOverlay')
-    .style.display = 'flex';
+  container.innerHTML = html || '<p style="text-align:center;color:#aaa;">Tidak ada queue</p>';
 }
 
-function hideLoading(){
+// ─────────────────────────────────────────────
+// TOMBOL SELESAI — hapus dari queue & sheet
+// ─────────────────────────────────────────────
+async function markDone(queueID){
+  const confirmed = confirm('Tandai pesanan ini sebagai selesai?');
+  if(!confirmed) return;
 
-  document
-    .getElementById('loadingOverlay')
-    .style.display = 'none';
+  // Animasi hilang dulu
+  const el = document.getElementById('qi-' + queueID);
+  if(el){
+    el.classList.add('removing');
+    await new Promise(r => setTimeout(r, 400));
+  }
+
+  try{
+    const response = await fetch(API_URL + '?action=completeQueue', {
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify({ queueID })
+    });
+    const result = await response.json();
+
+    if(result.success){
+      if(el) el.remove();
+    } else {
+      alert(result.message || 'Gagal update');
+      if(el) el.classList.remove('removing');
+      loadQueue();
+    }
+  }catch(err){
+    alert('Gagal koneksi');
+    if(el) el.classList.remove('removing');
+    console.log(err);
+  }
 }
 
-  function openMaps(url){
+// ─────────────────────────────────────────────
+// MODAL REPEAT ORDER
+// ─────────────────────────────────────────────
+async function openRepeatModal(){
+  document.getElementById('repeatModal').classList.add('open');
+  document.getElementById('customerSearch').value = '';
 
-  if(!url){
-    alert('Maps tidak tersedia');
+  // Load data customer
+  try{
+    const response = await fetch(API_URL + '?action=getCustomers', {
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify({})
+    });
+    allCustomers = await response.json();
+    renderCustomerList(allCustomers);
+  }catch(err){
+    document.getElementById('customerList').innerHTML =
+      '<p style="color:#f87171;text-align:center;">Gagal memuat customer</p>';
+  }
+}
+
+function closeRepeatModal(){
+  document.getElementById('repeatModal').classList.remove('open');
+}
+
+function closeRepeatModalIfOutside(event){
+  if(event.target.id === 'repeatModal') closeRepeatModal();
+}
+
+function filterCustomers(){
+  const q = document.getElementById('customerSearch').value.toLowerCase();
+  const filtered = allCustomers.filter(c =>
+    c.nama.toLowerCase().includes(q) ||
+    (c.alamat && c.alamat.toLowerCase().includes(q))
+  );
+  renderCustomerList(filtered);
+}
+
+function renderCustomerList(list){
+  const el = document.getElementById('customerList');
+  if(!list || list.length === 0){
+    el.innerHTML = '<p style="color:#aaa;text-align:center;">Customer tidak ditemukan</p>';
     return;
   }
 
-  // kalau belum ada https
-  if(!url.startsWith('http')){
-    url = 'https://' + url;
-  }
+  let html = '';
+  list.forEach(c => {
+    html += `
+      <div class="customer-item" onclick="addRepeat('${c.customerID}', '${c.nama}')">
+        <div class="customer-item-name">${c.nama}</div>
+        <div class="customer-item-addr">${c.alamat || '-'}</div>
+      </div>
+    `;
+  });
+  el.innerHTML = html;
+}
 
+async function addRepeat(customerID, nama){
+  closeRepeatModal();
+  showLoading();
+
+  try{
+    const response = await fetch(API_URL + '?action=addRepeatToQueue', {
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify({ customerID })
+    });
+    const result = await response.json();
+    hideLoading();
+    alert(result.message);
+    if(result.success) loadQueue();
+  }catch(err){
+    hideLoading();
+    alert('Gagal menambahkan repeat order');
+    console.log(err);
+  }
+}
+
+// ─────────────────────────────────────────────
+// HELPER
+// ─────────────────────────────────────────────
+function openMaps(url){
+  if(!url){ alert('Maps tidak tersedia'); return; }
+  if(!url.startsWith('http')) url = 'https://' + url;
   window.open(url, '_blank');
 }
 
 function openWA(number, queue, name){
-
   const msg = [
     `Halo Kak ${name} 👋`,
     ``,
@@ -539,29 +642,24 @@ function openWA(number, queue, name){
     `Terima kasih,`,
     `*DONAT TETANGGA 🍩* Manisnya sampai ke rumah kamu ✨`
   ].join('\n');
-    
-  const waUrl = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
 
+  const waUrl = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
   window.open(waUrl, '_blank');
 }
 
-</script>
+function showLoading(){
+  document.getElementById('loadingOverlay').style.display = 'flex';
+}
 
-  <div id="loadingOverlay">
-  <div class="loader-box">
-    <div class="donut-loader">
-      <div class="donut"></div>
-      <div class="sprinkle s1"></div>
-      <div class="sprinkle s2"></div>
-      <div class="sprinkle s3"></div>
-      <div class="sprinkle s4"></div>
-    </div>
-    <div class="loading-text">
-      Donaaat
-    </div>
-  </div>
-</div>
+function hideLoading(){
+  document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+window.onload = function(){
+  loadQueue();
+};
+
+  </script>
 
 </body>
-
 </html>
