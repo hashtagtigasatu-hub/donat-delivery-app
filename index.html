@@ -289,10 +289,9 @@
     <button class="btn btn-primary" onclick="submitCustomer()">Submit & Set Queue</button>
   </div>
 
-  <!-- ── GENERATE + REPEAT ── -->
+  <!-- ── REPEAT ORDER ── -->
   <div class="card">
-    <button class="btn btn-primary"    onclick="generateQueue()">Generate Queue</button>
-    <button class="btn btn-secondary"  onclick="openRepeatModal()">+ Repeat Order</button>
+    <button class="btn btn-secondary" style="margin-top:0" onclick="openRepeatModal()">+ Repeat Order</button>
   </div>
 
   <div id="queueContainer"></div>
@@ -438,8 +437,6 @@ function updateRepeatPreview() {
 
 // ─────────────────────────────────────────────
 // SUBMIT CUSTOMER BARU
-// 1. saveCustomer → dapat customerID + koordinat
-// 2. addNewToQueue dengan data lengkap
 // ─────────────────────────────────────────────
 async function submitCustomer() {
   const nama   = document.getElementById('inputNama').value.trim();
@@ -467,9 +464,9 @@ async function submitCustomer() {
       nama, wa    : normalizeWA(wa), maps,
       lat         : r1.lat,
       lng         : r1.lng,
+      varian      : selectedVarian,
       tipePaket   : selectedPaket,
-      jumlahPaket : qty,
-      varian      : selectedVarian
+      jumlahPaket : qty
     });
 
     hideLoading();
@@ -490,22 +487,6 @@ async function submitCustomer() {
   } catch(err) {
     hideLoading();
     alert('Gagal koneksi: ' + err.message);
-  }
-}
-
-// ─────────────────────────────────────────────
-// GENERATE QUEUE (sort ulang)
-// ─────────────────────────────────────────────
-async function generateQueue() {
-  showLoading();
-  try {
-    const r = await post('generateQueue', {});
-    hideLoading();
-    alert(r.message);
-    loadQueue();
-  } catch(err) {
-    hideLoading();
-    alert('Gagal generate queue');
   }
 }
 
@@ -538,8 +519,18 @@ function renderQueue(data) {
     const labelPaket = item.tipePaket === '3_10000' ? '3 donat' : item.tipePaket === '6_20000' ? '6 donat' : '-';
     const totalHarga = parseInt(item.totalHarga) || 0;
 
+    // data-* attributes menghindari masalah escaping di onclick
     html += `
-      <div class="queue-item" id="qi-${item.queueID}">
+      <div class="queue-item" id="qi-${item.queueID}"
+        data-qid="${item.queueID}"
+        data-wa="${item.wa || ''}"
+        data-urutan="${item.urutan}"
+        data-nama="${(item.nama || '').replace(/"/g,'&quot;')}"
+        data-varian="${(item.varian || '').replace(/"/g,'&quot;')}"
+        data-jumlah="${item.jumlahPaket || 1}"
+        data-tipe="${item.tipePaket || ''}"
+        data-ongkir="${ongkirVal}"
+        data-maps="${(item.maps || '').replace(/"/g,'&quot;')}">
         <div class="queue-header">
           <div class="queue-title">#${item.urutan} ${item.nama}</div>
           <div class="queue-badge">${item.distance} KM</div>
@@ -551,14 +542,9 @@ function renderQueue(data) {
           ${ongkirText}
         </div>
         <div class="action-row">
-          <button class="action-btn maps-btn"
-            data-url="${item.maps || ''}"
-            onclick="openMaps(this.getAttribute('data-url'))">Maps</button>
-          <button class="action-btn wa-btn"
-            onclick='openWA(${JSON.stringify(item.wa)}, ${JSON.stringify(item.urutan)}, ${JSON.stringify(item.nama)}, ${JSON.stringify(item.varian)}, ${JSON.stringify(item.jumlahPaket)}, ${JSON.stringify(item.tipePaket)}, ${JSON.stringify(ongkirVal)})'>
-            WhatsApp</button>
-          <button class="action-btn done-btn"
-            onclick='markDone(${JSON.stringify(item.queueID)})'>✓ Selesai</button>
+          <button class="action-btn maps-btn" onclick="openMapsFromCard(this)">Maps</button>
+          <button class="action-btn wa-btn"   onclick="openWAFromCard(this)">WhatsApp</button>
+          <button class="action-btn done-btn" onclick="markDoneFromCard(this)">✓ Selesai</button>
         </div>
       </div>
     `;
@@ -566,10 +552,35 @@ function renderQueue(data) {
   container.innerHTML = html;
 }
 
-// ─────────────────────────────────────────────
-// SELESAI
-// ─────────────────────────────────────────────
-async function markDone(queueID) {
+function getCardData(btn) {
+  const card = btn.closest('.queue-item');
+  return {
+    queueID : card.dataset.qid,
+    wa      : card.dataset.wa,
+    urutan  : card.dataset.urutan,
+    nama    : card.dataset.nama,
+    varian  : card.dataset.varian,
+    jumlah  : parseInt(card.dataset.jumlah),
+    tipe    : card.dataset.tipe,
+    ongkir  : parseInt(card.dataset.ongkir),
+    maps    : card.dataset.maps
+  };
+}
+
+function openMapsFromCard(btn) {
+  let url = getCardData(btn).maps;
+  if (!url) { alert('Maps tidak tersedia'); return; }
+  if (!url.startsWith('http')) url = 'https://' + url;
+  window.open(url, '_blank');
+}
+
+function openWAFromCard(btn) {
+  const d = getCardData(btn);
+  openWA(d.wa, d.urutan, d.nama, d.varian, d.jumlah, d.tipe, d.ongkir);
+}
+
+async function markDoneFromCard(btn) {
+  const queueID = getCardData(btn).queueID;
   if (!confirm('Tandai pesanan ini sebagai selesai?')) return;
 
   const el = document.getElementById('qi-' + queueID);
@@ -579,7 +590,7 @@ async function markDone(queueID) {
     const r = await post('completeQueue', { queueID });
     if (r.success) {
       if (el) el.remove();
-      loadQueue(); // refresh supaya nomor urut terupdate
+      loadQueue();
     } else {
       alert(r.message);
       if (el) el.classList.remove('removing');
@@ -682,7 +693,7 @@ async function confirmRepeat() {
 }
 
 // ─────────────────────────────────────────────
-// WHATSAPP — pesan update dengan detail order
+// WHATSAPP
 // ─────────────────────────────────────────────
 function openWA(number, queue, name, varian, jumlah, tipePaket, ongkir) {
   const labelPaket = tipePaket === '3_10000' ? '3 donat' : '6 donat';
