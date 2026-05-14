@@ -1,641 +1,705 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="
-      width=device-width,
-      initial-scale=1,
-      maximum-scale=1,
-      user-scalable=no
-    ">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Donat Tetangga</title>
-
   <style>
-
-    *{
-      box-sizing:border-box;
-      -webkit-tap-highlight-color:transparent;
-    }
+    *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
     body{
-      margin:0;
-      background:#f3f4f6;
-      font-family:Arial,sans-serif;
-      color:#111;
-      max-width:480px;
-      margin:auto;
-      min-height:100vh;
+      margin:0; background:#f3f4f6;
+      font-family:Arial,sans-serif; color:#111;
+      max-width:480px; margin:auto; min-height:100vh;
     }
 
     .header{
-      background:#ffe4ef;
-      padding:20px;
-      position:sticky;
-      top:0;
-      z-index:999;
+      background:#ffe4ef; padding:20px;
+      position:sticky; top:0; z-index:999;
       border-bottom:1px solid #f9a8d4;
       box-shadow:0 2px 10px rgba(0,0,0,.05);
     }
+    .title{ font-size:24px; font-weight:bold; }
 
-    .title{
-      font-size:24px;
-      font-weight:bold;
-    }
-
-    .container{
-      padding:16px;
-    }
+    .container{ padding:16px; }
 
     .card{
-      background:white;
-      border-radius:24px;
-      padding:18px;
-      margin-bottom:18px;
+      background:white; border-radius:24px;
+      padding:18px; margin-bottom:18px;
     }
 
     .input{
-      width:100%;
-      border:none;
-      background:#ffe4ef;
-      padding:18px;
-      border-radius:16px;
-      font-size:16px;
-      margin-top:12px;
+      width:100%; border:none; background:#ffe4ef;
+      padding:18px; border-radius:16px;
+      font-size:16px; margin-top:12px;
     }
-
     .input:focus{
       background:#ffd6e7;
       box-shadow:0 0 0 3px rgba(251,207,232,0.6);
+      outline:none;
+    }
+    textarea{ min-height:90px; resize:none; }
+
+    /* ── PILIHAN VARIAN & PAKET ── */
+    .section-label{
+      font-size:13px; font-weight:bold;
+      color:#8b5e3c; margin-top:16px; margin-bottom:6px;
+      padding-left:4px;
     }
 
-    textarea{
-      min-height:90px;
-      resize:none;
+    .chip-row{
+      display:flex; gap:8px; flex-wrap:wrap;
     }
 
-    .btn{
-      width:100%;
-      border:none;
-      padding:18px;
-      border-radius:18px;
-      font-size:16px;
+    .chip{
+      border:2px solid #f9a8d4;
+      background:white;
+      padding:10px 16px;
+      border-radius:50px;
+      font-size:14px;
       font-weight:bold;
-      margin-top:14px;
       cursor:pointer;
+      transition:all 0.15s;
+      color:#555;
     }
-
-    .btn-primary{
+    .chip.active{
       background:#8b5e3c;
+      border-color:#8b5e3c;
       color:white;
     }
 
+    .qty-row{
+      display:flex; align-items:center;
+      gap:12px; margin-top:10px;
+    }
+    .qty-btn{
+      width:40px; height:40px;
+      border:none; border-radius:50%;
+      background:#ffe4ef; font-size:20px;
+      font-weight:bold; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .qty-val{
+      font-size:20px; font-weight:bold;
+      min-width:28px; text-align:center;
+    }
+
+    /* preview harga di form */
+    .price-preview{
+      margin-top:12px;
+      background:#fef9f0;
+      border-radius:14px;
+      padding:12px 16px;
+      font-size:14px;
+      color:#555;
+      display:none;
+    }
+    .price-preview.show{ display:block; }
+    .price-preview strong{ color:#8b5e3c; }
+
+    .btn{
+      width:100%; border:none;
+      padding:18px; border-radius:18px;
+      font-size:16px; font-weight:bold;
+      margin-top:14px; cursor:pointer;
+    }
+    .btn-primary{ background:#8b5e3c; color:white; }
+    .btn-secondary{ background:#ffe4ef; color:#8b5e3c; margin-top:10px; }
+
+    /* ── QUEUE CARD ── */
     .queue-item{
-      background:white;
-      border-radius:20px;
-      padding:18px;
-      margin-bottom:14px;
-      transition: opacity 0.4s, transform 0.4s;
+      background:white; border-radius:20px;
+      padding:18px; margin-bottom:14px;
+      transition:opacity 0.4s, transform 0.4s;
+    }
+    .queue-item.removing{ opacity:0; transform:scale(0.95); }
+
+    .queue-header{
+      display:flex; align-items:flex-start;
+      justify-content:space-between; gap:8px;
+    }
+    .queue-title{ font-size:18px; font-weight:bold; }
+    .queue-badge{
+      font-size:12px; font-weight:bold;
+      background:#ffe4ef; color:#8b5e3c;
+      padding:4px 10px; border-radius:50px;
+      white-space:nowrap; margin-top:2px;
     }
 
-    .queue-item.removing{
-      opacity:0;
-      transform:scale(0.95);
+    .queue-meta{
+      margin-top:8px; font-size:13px;
+      color:#666; line-height:1.8;
     }
+    .queue-meta span{ margin-right:12px; }
 
-    .queue-title{
-      font-size:18px;
-      font-weight:bold;
+    .ongkir-tag{
+      display:inline-block;
+      font-size:12px; font-weight:bold;
+      padding:3px 10px; border-radius:50px;
+      margin-top:4px;
     }
-
-    .queue-distance{
-      margin-top:8px;
-      color:#666;
-    }
+    .ongkir-gratis{ background:#d1fae5; color:#065f46; }
+    .ongkir-bayar { background:#fef3c7; color:#92400e; }
 
     .action-row{
-      display:flex;
-      gap:10px;
-      margin-top:16px;
+      display:flex; gap:8px; margin-top:14px;
+      flex-wrap:wrap;
     }
-
     .action-btn{
-      flex:1;
-      border:none;
-      padding:14px;
-      border-radius:14px;
-      font-weight:bold;
-      cursor:pointer;
+      flex:1; border:none;
+      padding:12px 8px; border-radius:14px;
+      font-weight:bold; cursor:pointer;
+      font-size:14px; min-width:70px;
     }
+    .maps-btn{ background:#f9a8d4; color:#111; }
+    .wa-btn  { background:#f9a8d4; color:#111; }
+    .done-btn{ background:#d1fae5; color:#065f46; }
 
-    .maps-btn{
-      background:#f9a8d4;
-      color:#111;
-    }
-
-    .wa-btn{
-      background:#f9a8d4;
-      color:#111;
-    }
-
-    /* ── TOMBOL SELESAI ── */
-    .done-btn{
-      background:#d1fae5;
-      color:#065f46;
-    }
-
-    .btn-primary:hover,
-    .maps-btn:hover,
-    .wa-btn:hover,
-    .done-btn:hover{
-      transform:scale(1.02);
-      opacity:0.9;
+    .btn-primary:hover, .maps-btn:hover,
+    .wa-btn:hover, .done-btn:hover,
+    .btn-secondary:hover{
+      transform:scale(1.02); opacity:0.9;
     }
 
     /* ── MODAL REPEAT ORDER ── */
     .modal-overlay{
-      position:fixed;
-      inset:0;
+      position:fixed; inset:0;
       background:rgba(0,0,0,0.4);
-      display:none;
-      justify-content:center;
-      align-items:flex-end;
-      z-index:9999;
+      display:none; justify-content:center;
+      align-items:flex-end; z-index:9999;
     }
-
-    .modal-overlay.open{
-      display:flex;
-    }
+    .modal-overlay.open{ display:flex; }
 
     .modal-box{
       background:white;
       border-radius:28px 28px 0 0;
       padding:24px 20px;
-      width:100%;
-      max-width:480px;
-      max-height:70vh;
-      display:flex;
-      flex-direction:column;
+      width:100%; max-width:480px;
+      max-height:80vh;
+      display:flex; flex-direction:column;
     }
-
-    .modal-title{
-      font-size:18px;
-      font-weight:bold;
-      margin-bottom:14px;
-    }
+    .modal-title{ font-size:18px; font-weight:bold; margin-bottom:14px; }
 
     .modal-search{
-      width:100%;
-      border:none;
-      background:#ffe4ef;
-      padding:14px 18px;
-      border-radius:14px;
-      font-size:15px;
+      width:100%; border:none;
+      background:#ffe4ef; padding:14px 18px;
+      border-radius:14px; font-size:15px;
       margin-bottom:12px;
     }
-
     .modal-search:focus{
       background:#ffd6e7;
       box-shadow:0 0 0 3px rgba(251,207,232,0.6);
       outline:none;
     }
 
-    .customer-list{
-      overflow-y:auto;
-      flex:1;
-    }
-
+    .customer-list{ overflow-y:auto; flex:1; }
     .customer-item{
-      padding:14px 16px;
-      border-radius:14px;
-      cursor:pointer;
-      margin-bottom:8px;
-      background:#f9fafb;
-      transition:background 0.15s;
+      padding:14px 16px; border-radius:14px;
+      cursor:pointer; margin-bottom:8px;
+      background:#f9fafb; transition:background 0.15s;
     }
+    .customer-item:hover{ background:#ffe4ef; }
+    .customer-item-name{ font-weight:bold; font-size:15px; }
+    .customer-item-addr{ font-size:13px; color:#666; margin-top:2px; }
 
-    .customer-item:hover{
-      background:#ffe4ef;
+    /* modal order detail (varian+paket untuk repeat) */
+    .repeat-order-box{
+      background:#fef9f0; border-radius:16px;
+      padding:16px; margin-top:12px;
+      display:none;
     }
-
-    .customer-item-name{
-      font-weight:bold;
-      font-size:15px;
-    }
-
-    .customer-item-addr{
-      font-size:13px;
-      color:#666;
-      margin-top:2px;
-    }
+    .repeat-order-box.show{ display:block; }
 
     .modal-close{
-      margin-top:14px;
-      width:100%;
-      border:none;
-      padding:14px;
-      border-radius:14px;
-      font-weight:bold;
-      cursor:pointer;
-      background:#f3f4f6;
-      color:#555;
+      margin-top:14px; width:100%; border:none;
+      padding:14px; border-radius:14px;
+      font-weight:bold; cursor:pointer;
+      background:#f3f4f6; color:#555;
     }
 
-    /* ── LOADING OVERLAY ── */
+    /* ── LOADING ── */
     #loadingOverlay{
-      position:fixed;
-      inset:0;
+      position:fixed; inset:0;
       background:rgba(255,255,255,0.9);
-      display:none;
-      justify-content:center;
-      align-items:center;
-      z-index:99999;
+      display:none; justify-content:center;
+      align-items:center; z-index:99999;
     }
-
-    .loader-box{
-      text-align:center;
-    }
-
-    .donut-loader{
-      position:relative;
-      width:70px;
-      height:70px;
-      margin:auto;
-    }
-
+    .loader-box{ text-align:center; }
+    .donut-loader{ position:relative; width:70px; height:70px; margin:auto; }
     .donut{
-      width:100%;
-      height:100%;
-      background:#8b5e3c;
-      border-radius:50%;
-      position:relative;
+      width:100%; height:100%;
+      background:#8b5e3c; border-radius:50%; position:relative;
     }
-
     .donut::after{
-      content:"";
-      position:absolute;
-      width:28px;
-      height:28px;
-      background:#ffe4ef;
-      border-radius:50%;
-      top:50%;
-      left:50%;
+      content:""; position:absolute;
+      width:28px; height:28px; background:#ffe4ef;
+      border-radius:50%; top:50%; left:50%;
       transform:translate(-50%,-50%);
     }
-
     .sprinkle{
-      width:8px;
-      height:8px;
-      border-radius:50%;
-      background:#f9a8d4;
-      position:absolute;
-      top:50%;
-      left:50%;
-      transform-origin:0 -28px;
+      width:8px; height:8px; border-radius:50%;
+      background:#f9a8d4; position:absolute;
+      top:50%; left:50%; transform-origin:0 -28px;
       animation:spin 1.2s linear infinite;
     }
-
     .s1{ transform:rotate(0deg) translateY(-30px); }
     .s2{ transform:rotate(90deg) translateY(-30px); }
     .s3{ transform:rotate(180deg) translateY(-30px); }
     .s4{ transform:rotate(270deg) translateY(-30px); }
-
-    @keyframes spin{
-      100%{ transform:rotate(360deg); }
-    }
-
-    .loading-text{
-      margin-top:16px;
-      font-size:16px;
-      font-weight:bold;
-    }
-
+    @keyframes spin{ 100%{ transform:rotate(360deg); } }
+    .loading-text{ margin-top:16px; font-size:16px; font-weight:bold; }
   </style>
-
 </head>
-
 <body>
 
-  <div class="header">
-    <div class="title">Donat Tetangga 🍩</div>
-  </div>
+<div class="header">
+  <div class="title">Donat Tetangga 🍩</div>
+</div>
 
-  <div class="container">
+<div class="container">
 
-    <!-- Form Input Customer Baru -->
-    <div class="card">
-      <input class="input" id="inputNama" placeholder="Nama Customer">
-      <input class="input" id="inputWA" placeholder="Nomor WhatsApp">
-      <textarea class="input" id="inputAlamat" placeholder="Alamat"></textarea>
-      <input class="input" id="inputMaps" placeholder="Link Google Maps">
-      <button class="btn btn-primary" onclick="saveCustomer()">Submit</button>
+  <!-- ── FORM CUSTOMER BARU ── -->
+  <div class="card">
+    <input class="input" id="inputNama"  placeholder="Nama Customer">
+    <input class="input" id="inputWA"    placeholder="Nomor WhatsApp">
+    <textarea class="input" id="inputAlamat" placeholder="Alamat"></textarea>
+    <input class="input" id="inputMaps"  placeholder="Link Google Maps">
+
+    <div class="section-label">Varian Donat</div>
+    <div class="chip-row" id="varianChips">
+      <div class="chip" data-val="Susu Vanilla"  onclick="selectChip('varian',this)">🥛 Susu Vanilla</div>
+      <div class="chip" data-val="Susu Cokelat" onclick="selectChip('varian',this)">🍫 Susu Cokelat</div>
     </div>
 
-    <!-- Tombol Generate Queue + Repeat Order -->
-    <div class="card">
-      <button class="btn btn-primary" onclick="generateQueue()">Generate Queue</button>
-      <button class="btn" style="background:#ffe4ef;color:#8b5e3c;margin-top:10px;" onclick="openRepeatModal()">
-        + Repeat Order Customer Lama
+    <div class="section-label">Paket</div>
+    <div class="chip-row" id="paketChips">
+      <div class="chip" data-val="3_10000" onclick="selectChip('paket',this)">3 🍩 Rp10.000</div>
+      <div class="chip" data-val="6_20000" onclick="selectChip('paket',this)">6 🍩 Rp20.000</div>
+    </div>
+
+    <div class="section-label">Jumlah Paket</div>
+    <div class="qty-row">
+      <button class="qty-btn" onclick="changeQty('formQty',-1)">−</button>
+      <div class="qty-val" id="formQty">1</div>
+      <button class="qty-btn" onclick="changeQty('formQty',1)">+</button>
+    </div>
+
+    <div class="price-preview" id="formPreview"></div>
+
+    <button class="btn btn-primary" onclick="submitCustomer()">Submit & Set Queue</button>
+  </div>
+
+  <!-- ── GENERATE + REPEAT ── -->
+  <div class="card">
+    <button class="btn btn-primary"    onclick="generateQueue()">Generate Queue</button>
+    <button class="btn btn-secondary"  onclick="openRepeatModal()">+ Repeat Order</button>
+  </div>
+
+  <div id="queueContainer"></div>
+</div>
+
+<!-- ── MODAL REPEAT ORDER ── -->
+<div class="modal-overlay" id="repeatModal" onclick="closeModalIfOutside(event)">
+  <div class="modal-box">
+    <div class="modal-title">Repeat Order</div>
+    <input class="modal-search" id="customerSearch"
+      placeholder="Cari nama customer..." oninput="filterCustomers()">
+    <div class="customer-list" id="customerList">
+      <p style="color:#aaa;text-align:center;">Loading...</p>
+    </div>
+
+    <!-- Pilihan varian+paket untuk repeat order -->
+    <div class="repeat-order-box" id="repeatOrderBox">
+      <div style="font-weight:bold;margin-bottom:10px;" id="repeatCustomerName"></div>
+
+      <div class="section-label" style="margin-top:0">Varian Donat</div>
+      <div class="chip-row" id="repeatVarianChips">
+        <div class="chip" data-val="Susu Vanilla"  onclick="selectChip('repeatVarian',this)">🥛 Susu Vanilla</div>
+        <div class="chip" data-val="Susu Cokelat" onclick="selectChip('repeatVarian',this)">🍫 Susu Cokelat</div>
+      </div>
+
+      <div class="section-label">Paket</div>
+      <div class="chip-row" id="repeatPaketChips">
+        <div class="chip" data-val="3_10000" onclick="selectChip('repeatPaket',this)">3 🍩 Rp10.000</div>
+        <div class="chip" data-val="6_20000" onclick="selectChip('repeatPaket',this)">6 🍩 Rp20.000</div>
+      </div>
+
+      <div class="section-label">Jumlah Paket</div>
+      <div class="qty-row">
+        <button class="qty-btn" onclick="changeQty('repeatQty',-1)">−</button>
+        <div class="qty-val" id="repeatQty">1</div>
+        <button class="qty-btn" onclick="changeQty('repeatQty',1)">+</button>
+      </div>
+
+      <div class="price-preview show" id="repeatPreview" style="margin-top:10px;"></div>
+
+      <button class="btn btn-primary" style="margin-top:12px;" onclick="confirmRepeat()">
+        Tambahkan ke Queue
       </button>
     </div>
 
-    <div id="queueContainer"></div>
-
+    <button class="modal-close" onclick="closeRepeatModal()">Tutup</button>
   </div>
+</div>
 
-  <!-- Modal Repeat Order -->
-  <div class="modal-overlay" id="repeatModal" onclick="closeRepeatModalIfOutside(event)">
-    <div class="modal-box">
-      <div class="modal-title">Pilih Customer Repeat Order 🔁</div>
-      <input
-        class="modal-search"
-        id="customerSearch"
-        placeholder="Cari nama customer..."
-        oninput="filterCustomers()"
-      >
-      <div class="customer-list" id="customerList">
-        <p style="color:#aaa;text-align:center;">Loading...</p>
-      </div>
-      <button class="modal-close" onclick="closeRepeatModal()">Tutup</button>
+<!-- ── LOADING ── -->
+<div id="loadingOverlay">
+  <div class="loader-box">
+    <div class="donut-loader">
+      <div class="donut"></div>
+      <div class="sprinkle s1"></div>
+      <div class="sprinkle s2"></div>
+      <div class="sprinkle s3"></div>
+      <div class="sprinkle s4"></div>
     </div>
+    <div class="loading-text">Donaaat</div>
   </div>
+</div>
 
-  <!-- Loading Overlay -->
-  <div id="loadingOverlay">
-    <div class="loader-box">
-      <div class="donut-loader">
-        <div class="donut"></div>
-        <div class="sprinkle s1"></div>
-        <div class="sprinkle s2"></div>
-        <div class="sprinkle s3"></div>
-        <div class="sprinkle s4"></div>
-      </div>
-      <div class="loading-text">Donaaat</div>
-    </div>
-  </div>
-
-  <script>
-
+<script>
 const API_URL = 'https://script.google.com/macros/s/AKfycbwIxvVvK5RXnBmHukkZSelM25GssapmQ6a7a-CInUCae1hehXGv9fte2QifAmLsepEpPQ/exec';
 
-let allCustomers = []; // cache untuk modal repeat order
+// state form
+let selectedVarian = '';
+let selectedPaket  = '';
+let allCustomers   = [];
+let selectedRepeatCustomer = null;
+let selectedRepeatVarian = '';
+let selectedRepeatPaket  = '';
 
 // ─────────────────────────────────────────────
-// SIMPAN CUSTOMER BARU
+// CHIP SELECTOR
 // ─────────────────────────────────────────────
-async function saveCustomer(){
+function selectChip(group, el) {
+  const containers = {
+    varian      : 'varianChips',
+    paket       : 'paketChips',
+    repeatVarian: 'repeatVarianChips',
+    repeatPaket : 'repeatPaketChips'
+  };
+  const container = document.getElementById(containers[group]);
+  container.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+
+  if      (group === 'varian')       { selectedVarian = el.dataset.val; updateFormPreview(); }
+  else if (group === 'paket')        { selectedPaket  = el.dataset.val; updateFormPreview(); }
+  else if (group === 'repeatVarian') { selectedRepeatVarian = el.dataset.val; updateRepeatPreview(); }
+  else if (group === 'repeatPaket')  { selectedRepeatPaket  = el.dataset.val; updateRepeatPreview(); }
+}
+
+// ─────────────────────────────────────────────
+// QTY
+// ─────────────────────────────────────────────
+function changeQty(elId, delta) {
+  const el  = document.getElementById(elId);
+  const val = Math.max(1, parseInt(el.textContent) + delta);
+  el.textContent = val;
+  if (elId === 'formQty')   updateFormPreview();
+  if (elId === 'repeatQty') updateRepeatPreview();
+}
+
+// ─────────────────────────────────────────────
+// PRICE PREVIEW
+// ─────────────────────────────────────────────
+function hitungTotalJS(tipePaket, qty) {
+  if (tipePaket === '3_10000') return qty * 10000;
+  if (tipePaket === '6_20000') return qty * 20000;
+  return 0;
+}
+function formatRp(n) {
+  return 'Rp' + n.toLocaleString('id-ID');
+}
+
+function updateFormPreview() {
+  const el  = document.getElementById('formPreview');
+  const qty = parseInt(document.getElementById('formQty').textContent);
+  if (!selectedVarian || !selectedPaket) { el.classList.remove('show'); return; }
+  const total = hitungTotalJS(selectedPaket, qty);
+  const label = selectedPaket === '3_10000' ? '3 donat' : '6 donat';
+  el.innerHTML = `
+    <strong>${selectedVarian}</strong> · ${qty}× paket ${label}<br>
+    Total: <strong>${formatRp(total)}</strong>
+    <em style="color:#aaa;font-size:12px;"> (ongkir dihitung dari jarak)</em>
+  `;
+  el.classList.add('show');
+}
+
+function updateRepeatPreview() {
+  const el  = document.getElementById('repeatPreview');
+  const qty = parseInt(document.getElementById('repeatQty').textContent);
+  if (!selectedRepeatVarian || !selectedRepeatPaket) { el.innerHTML=''; return; }
+  const total = hitungTotalJS(selectedRepeatPaket, qty);
+  const label = selectedRepeatPaket === '3_10000' ? '3 donat' : '6 donat';
+  el.innerHTML = `
+    <strong>${selectedRepeatVarian}</strong> · ${qty}× paket ${label}<br>
+    Total: <strong>${formatRp(total)}</strong>
+  `;
+}
+
+// ─────────────────────────────────────────────
+// SUBMIT CUSTOMER BARU
+// 1. saveCustomer → dapat customerID + koordinat
+// 2. addNewToQueue dengan data lengkap
+// ─────────────────────────────────────────────
+async function submitCustomer() {
   const nama   = document.getElementById('inputNama').value.trim();
   const wa     = document.getElementById('inputWA').value.trim();
   const alamat = document.getElementById('inputAlamat').value.trim();
   const maps   = document.getElementById('inputMaps').value.trim();
+  const qty    = parseInt(document.getElementById('formQty').textContent);
 
-  if(!nama || !wa || !alamat || !maps){
-    alert('Semua field harus diisi');
-    return;
+  if (!nama || !wa || !alamat || !maps) {
+    alert('Nama, WA, Alamat, dan Link Maps harus diisi'); return;
   }
+  if (!selectedVarian) { alert('Pilih varian donat dulu'); return; }
+  if (!selectedPaket)  { alert('Pilih paket dulu'); return; }
 
-  const data = { nama, wa, alamat, maps };
   showLoading();
 
-  try{
-    const response = await fetch(API_URL + '?action=saveCustomer', {
-      method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body: JSON.stringify(data)
+  try {
+    // Step 1: simpan ke CUSTOMER_DB
+    const r1 = await post('saveCustomer', { nama, wa, alamat, maps });
+    if (!r1.success) { hideLoading(); alert(r1.message); return; }
+
+    // Step 2: masukkan ke queue
+    const r2 = await post('addNewToQueue', {
+      customerID  : r1.customerID,
+      nama, wa    : normalizeWA(wa), maps,
+      lat         : r1.lat,
+      lng         : r1.lng,
+      tipePaket   : selectedPaket,
+      jumlahPaket : qty,
+      varian      : selectedVarian
     });
 
-    const result = await response.json();
     hideLoading();
-    alert(result.message || 'Berhasil disimpan');
+    alert(r2.success ? r2.message : r2.message);
 
-    document.getElementById('inputNama').value = '';
-    document.getElementById('inputWA').value = '';
-    document.getElementById('inputAlamat').value = '';
-    document.getElementById('inputMaps').value = '';
-    document.getElementById('inputNama').focus();
+    // Reset form
+    ['inputNama','inputWA','inputAlamat','inputMaps'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('formQty').textContent = '1';
+    document.querySelectorAll('#varianChips .chip, #paketChips .chip')
+      .forEach(c => c.classList.remove('active'));
+    selectedVarian = ''; selectedPaket = '';
+    document.getElementById('formPreview').classList.remove('show');
 
     loadQueue();
 
-  }catch(err){
+  } catch(err) {
     hideLoading();
     alert('Gagal koneksi: ' + err.message);
-    console.log(err);
   }
 }
 
 // ─────────────────────────────────────────────
-// GENERATE QUEUE
+// GENERATE QUEUE (sort ulang)
 // ─────────────────────────────────────────────
-async function generateQueue(){
+async function generateQueue() {
   showLoading();
-  try{
-    const response = await fetch(API_URL + '?action=generateQueue', {
-      method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body: JSON.stringify({})
-    });
-    const result = await response.json();
+  try {
+    const r = await post('generateQueue', {});
     hideLoading();
-    alert(result.message || 'Queue dibuat');
+    alert(r.message);
     loadQueue();
-  }catch(err){
+  } catch(err) {
     hideLoading();
     alert('Gagal generate queue');
-    console.log(err);
   }
 }
 
 // ─────────────────────────────────────────────
 // LOAD & RENDER QUEUE
 // ─────────────────────────────────────────────
-async function loadQueue(){
-  try{
-    const response = await fetch(API_URL + '?action=getQueue', {
-      method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body: JSON.stringify({})
-    });
-    const data = await response.json();
-    renderQueue(data);
-  }catch(err){
-    console.log(err);
-  }
+async function loadQueue() {
+  try {
+    const data = await post('getQueue', {});
+    renderQueue(Array.isArray(data) ? data : []);
+  } catch(err) { console.log(err); }
 }
 
-function renderQueue(data){
+function renderQueue(data) {
   const container = document.getElementById('queueContainer');
+  const pending   = data.filter(d => d.status !== 'Selesai');
 
-  if(!data || data.length === 0){
+  if (pending.length === 0) {
     container.innerHTML = '<p style="text-align:center;color:#aaa;">Tidak ada queue</p>';
     return;
   }
 
   let html = '';
+  pending.forEach(item => {
+    const ongkirVal  = parseInt(item.ongkir) || 0;
+    const ongkirText = ongkirVal === 0
+      ? '<span class="ongkir-tag ongkir-gratis">🎉 Gratis Ongkir</span>'
+      : '<span class="ongkir-tag ongkir-bayar">🛵 Ongkir ' + formatRp(ongkirVal) + '</span>';
 
-  data.forEach(item => {
-    // Hanya tampilkan yang masih Pending
-    if(item.status === 'Selesai') return;
+    const labelPaket = item.tipePaket === '3_10000' ? '3 donat' : item.tipePaket === '6_20000' ? '6 donat' : '-';
+    const totalHarga = parseInt(item.totalHarga) || 0;
 
     html += `
       <div class="queue-item" id="qi-${item.queueID}">
-        <div class="queue-title">#${item.urutan} ${item.nama}</div>
-        <div class="queue-distance">${item.distance} KM</div>
+        <div class="queue-header">
+          <div class="queue-title">#${item.urutan} ${item.nama}</div>
+          <div class="queue-badge">${item.distance} KM</div>
+        </div>
+        <div class="queue-meta">
+          <span>🍩 ${item.varian || '-'}</span>
+          <span>📦 ${item.jumlahPaket}× paket ${labelPaket}</span><br>
+          <span>💰 ${formatRp(totalHarga)}</span>
+          ${ongkirText}
+        </div>
         <div class="action-row">
           <button class="action-btn maps-btn"
             data-url="${item.maps || ''}"
-            onclick="openMaps(this.getAttribute('data-url'))">
-            Maps
-          </button>
+            onclick="openMaps(this.getAttribute('data-url'))">Maps</button>
           <button class="action-btn wa-btn"
-            onclick='openWA(${JSON.stringify(item.wa)}, ${JSON.stringify(item.urutan)}, ${JSON.stringify(item.nama)})'>
-            WhatsApp
-          </button>
+            onclick='openWA(${JSON.stringify(item.wa)}, ${JSON.stringify(item.urutan)}, ${JSON.stringify(item.nama)}, ${JSON.stringify(item.varian)}, ${JSON.stringify(item.jumlahPaket)}, ${JSON.stringify(item.tipePaket)}, ${JSON.stringify(ongkirVal)})'>
+            WhatsApp</button>
           <button class="action-btn done-btn"
-            onclick='markDone(${JSON.stringify(item.queueID)})'>
-            ✓ Selesai
-          </button>
+            onclick='markDone(${JSON.stringify(item.queueID)})'>✓ Selesai</button>
         </div>
       </div>
     `;
   });
-
-  container.innerHTML = html || '<p style="text-align:center;color:#aaa;">Tidak ada queue</p>';
+  container.innerHTML = html;
 }
 
 // ─────────────────────────────────────────────
-// TOMBOL SELESAI — hapus dari queue & sheet
+// SELESAI
 // ─────────────────────────────────────────────
-async function markDone(queueID){
-  const confirmed = confirm('Tandai pesanan ini sebagai selesai?');
-  if(!confirmed) return;
+async function markDone(queueID) {
+  if (!confirm('Tandai pesanan ini sebagai selesai?')) return;
 
-  // Animasi hilang dulu
   const el = document.getElementById('qi-' + queueID);
-  if(el){
-    el.classList.add('removing');
-    await new Promise(r => setTimeout(r, 400));
-  }
+  if (el) { el.classList.add('removing'); await sleep(400); }
 
-  try{
-    const response = await fetch(API_URL + '?action=completeQueue', {
-      method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body: JSON.stringify({ queueID })
-    });
-    const result = await response.json();
-
-    if(result.success){
-      if(el) el.remove();
+  try {
+    const r = await post('completeQueue', { queueID });
+    if (r.success) {
+      if (el) el.remove();
+      loadQueue(); // refresh supaya nomor urut terupdate
     } else {
-      alert(result.message || 'Gagal update');
-      if(el) el.classList.remove('removing');
-      loadQueue();
+      alert(r.message);
+      if (el) el.classList.remove('removing');
     }
-  }catch(err){
+  } catch(err) {
     alert('Gagal koneksi');
-    if(el) el.classList.remove('removing');
-    console.log(err);
+    if (el) el.classList.remove('removing');
   }
 }
 
 // ─────────────────────────────────────────────
 // MODAL REPEAT ORDER
 // ─────────────────────────────────────────────
-async function openRepeatModal(){
+async function openRepeatModal() {
   document.getElementById('repeatModal').classList.add('open');
   document.getElementById('customerSearch').value = '';
+  document.getElementById('repeatOrderBox').classList.remove('show');
+  selectedRepeatCustomer = null;
+  selectedRepeatVarian   = '';
+  selectedRepeatPaket    = '';
 
-  // Load data customer
-  try{
-    const response = await fetch(API_URL + '?action=getCustomers', {
-      method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body: JSON.stringify({})
-    });
-    allCustomers = await response.json();
+  try {
+    allCustomers = await post('getCustomers', {});
     renderCustomerList(allCustomers);
-  }catch(err){
+  } catch(err) {
     document.getElementById('customerList').innerHTML =
-      '<p style="color:#f87171;text-align:center;">Gagal memuat customer</p>';
+      '<p style="color:#f87171;text-align:center;">Gagal memuat data</p>';
   }
 }
 
-function closeRepeatModal(){
+function closeRepeatModal() {
   document.getElementById('repeatModal').classList.remove('open');
 }
-
-function closeRepeatModalIfOutside(event){
-  if(event.target.id === 'repeatModal') closeRepeatModal();
+function closeModalIfOutside(e) {
+  if (e.target.id === 'repeatModal') closeRepeatModal();
 }
 
-function filterCustomers(){
+function filterCustomers() {
   const q = document.getElementById('customerSearch').value.toLowerCase();
-  const filtered = allCustomers.filter(c =>
+  renderCustomerList(allCustomers.filter(c =>
     c.nama.toLowerCase().includes(q) ||
     (c.alamat && c.alamat.toLowerCase().includes(q))
-  );
-  renderCustomerList(filtered);
+  ));
 }
 
-function renderCustomerList(list){
+function renderCustomerList(list) {
   const el = document.getElementById('customerList');
-  if(!list || list.length === 0){
+  if (!list || list.length === 0) {
     el.innerHTML = '<p style="color:#aaa;text-align:center;">Customer tidak ditemukan</p>';
     return;
   }
-
-  let html = '';
-  list.forEach(c => {
-    html += `
-      <div class="customer-item" onclick="addRepeat('${c.customerID}', '${c.nama}')">
-        <div class="customer-item-name">${c.nama}</div>
-        <div class="customer-item-addr">${c.alamat || '-'}</div>
-      </div>
-    `;
-  });
-  el.innerHTML = html;
+  el.innerHTML = list.map(c => `
+    <div class="customer-item" onclick="selectRepeatCustomer('${c.customerID}', '${c.nama}', '${c.alamat || ''}')">
+      <div class="customer-item-name">${c.nama}</div>
+      <div class="customer-item-addr">${c.alamat || '-'}</div>
+    </div>
+  `).join('');
 }
 
-async function addRepeat(customerID, nama){
+function selectRepeatCustomer(customerID, nama, alamat) {
+  selectedRepeatCustomer = customerID;
+
+  // Reset pilihan
+  document.getElementById('repeatQty').textContent = '1';
+  document.querySelectorAll('#repeatVarianChips .chip, #repeatPaketChips .chip')
+    .forEach(c => c.classList.remove('active'));
+  selectedRepeatVarian = '';
+  selectedRepeatPaket  = '';
+  document.getElementById('repeatPreview').innerHTML = '';
+
+  document.getElementById('repeatCustomerName').textContent = '🍩 ' + nama;
+  document.getElementById('repeatOrderBox').classList.add('show');
+  document.getElementById('customerList').scrollTop = 0;
+}
+
+async function confirmRepeat() {
+  if (!selectedRepeatCustomer) { alert('Pilih customer dulu'); return; }
+  if (!selectedRepeatVarian)   { alert('Pilih varian donat'); return; }
+  if (!selectedRepeatPaket)    { alert('Pilih paket'); return; }
+
+  const qty = parseInt(document.getElementById('repeatQty').textContent);
+
   closeRepeatModal();
   showLoading();
 
-  try{
-    const response = await fetch(API_URL + '?action=addRepeatToQueue', {
-      method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body: JSON.stringify({ customerID })
+  try {
+    const r = await post('addRepeatToQueue', {
+      customerID  : selectedRepeatCustomer,
+      tipePaket   : selectedRepeatPaket,
+      jumlahPaket : qty,
+      varian      : selectedRepeatVarian
     });
-    const result = await response.json();
     hideLoading();
-    alert(result.message);
-    if(result.success) loadQueue();
-  }catch(err){
+    alert(r.message);
+    if (r.success) loadQueue();
+  } catch(err) {
     hideLoading();
     alert('Gagal menambahkan repeat order');
-    console.log(err);
   }
 }
 
 // ─────────────────────────────────────────────
-// HELPER
+// WHATSAPP — pesan update dengan detail order
 // ─────────────────────────────────────────────
-function openMaps(url){
-  if(!url){ alert('Maps tidak tersedia'); return; }
-  if(!url.startsWith('http')) url = 'https://' + url;
-  window.open(url, '_blank');
-}
+function openWA(number, queue, name, varian, jumlah, tipePaket, ongkir) {
+  const labelPaket = tipePaket === '3_10000' ? '3 donat' : '6 donat';
+  const hargaPaket = tipePaket === '3_10000' ? 10000 : 20000;
+  const total      = jumlah * hargaPaket;
+  const ongkirText = ongkir === 0 ? 'GRATIS 🎉' : formatRp(ongkir);
 
-function openWA(number, queue, name){
   const msg = [
     `Halo Kak ${name} 👋`,
     ``,
-    `🎁 Pesanan donat sedang dalam proses pengantaran, pastikan Kakak ada ditempat yaa 👒`,
+    `🎁 Pesanan donat sedang dalam proses pengantaran, pastikan Kakak ada di tempat yaa 👒`,
+    ``,
+    `📋 Detail Pesanan:`,
+    `🍩 Varian   : ${varian}`,
+    `📦 Paket    : ${jumlah}× (${labelPaket} — ${formatRp(hargaPaket)})`,
+    `💰 Total    : ${formatRp(total)}`,
+    `🛵 Ongkir   : ${ongkirText}`,
     ``,
     `🎟️ Nomor antrian: #${queue}`,
     ``,
@@ -643,23 +707,40 @@ function openWA(number, queue, name){
     `*DONAT TETANGGA 🍩* Manisnya sampai ke rumah kamu ✨`
   ].join('\n');
 
-  const waUrl = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
-  window.open(waUrl, '_blank');
+  window.open(`https://wa.me/${number}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
-function showLoading(){
-  document.getElementById('loadingOverlay').style.display = 'flex';
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function openMaps(url) {
+  if (!url) { alert('Maps tidak tersedia'); return; }
+  if (!url.startsWith('http')) url = 'https://' + url;
+  window.open(url, '_blank');
 }
 
-function hideLoading(){
-  document.getElementById('loadingOverlay').style.display = 'none';
+function normalizeWA(number) {
+  number = number.toString().trim();
+  if (number.startsWith('08'))  return '62' + number.substring(1);
+  if (number.startsWith('+62')) return number.replace('+', '');
+  return number;
 }
 
-window.onload = function(){
-  loadQueue();
-};
+async function post(action, data) {
+  const response = await fetch(API_URL + '?action=' + action, {
+    method  : 'POST',
+    headers : { 'Content-Type': 'text/plain' },
+    body    : JSON.stringify(data)
+  });
+  return response.json();
+}
 
-  </script>
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+
+window.onload = loadQueue;
+</script>
 
 </body>
 </html>
