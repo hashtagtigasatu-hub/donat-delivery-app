@@ -20,6 +20,10 @@
       box-shadow:0 2px 10px rgba(0,0,0,.05);
     }
     .title{ font-size:24px; font-weight:bold; }
+    .header-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .header-datetime{ text-align:right; line-height:1.4; }
+    .header-time{ font-size:18px; font-weight:bold; color:#8b5e3c; }
+    .header-date{ font-size:11px; color:#b07a5a; }
 
     .container{ padding:16px; }
 
@@ -40,70 +44,87 @@
     }
     textarea{ min-height:90px; resize:none; }
 
-    /* ── PILIHAN VARIAN & PAKET ── */
     .section-label{
       font-size:13px; font-weight:bold;
       color:#8b5e3c; margin-top:16px; margin-bottom:6px;
       padding-left:4px;
     }
 
-    .chip-row{
-      display:flex; gap:8px; flex-wrap:wrap;
-    }
+    .chip-row{ display:flex; gap:8px; flex-wrap:wrap; }
 
     .chip{
-      border:2px solid #f9a8d4;
-      background:white;
-      padding:10px 16px;
-      border-radius:50px;
-      font-size:14px;
-      font-weight:bold;
-      cursor:pointer;
-      transition:all 0.15s;
-      color:#555;
+      border:2px solid #f9a8d4; background:white;
+      padding:10px 16px; border-radius:50px;
+      font-size:14px; font-weight:bold;
+      cursor:pointer; transition:all 0.15s; color:#555;
     }
-    .chip.active{
-      background:#8b5e3c;
-      border-color:#8b5e3c;
-      color:white;
-    }
+    .chip.active{ background:#8b5e3c; border-color:#8b5e3c; color:white; }
 
-    .qty-row{
-      display:flex; align-items:center;
-      gap:12px; margin-top:10px;
-    }
+    .qty-row{ display:flex; align-items:center; gap:12px; margin-top:10px; }
     .qty-btn{
-      width:40px; height:40px;
-      border:none; border-radius:50%;
-      background:#ffe4ef; font-size:20px;
-      font-weight:bold; cursor:pointer;
-      display:flex; align-items:center; justify-content:center;
+      width:40px; height:40px; border:none; border-radius:50%;
+      background:#ffe4ef; font-size:20px; font-weight:bold;
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
     }
-    .qty-val{
-      font-size:20px; font-weight:bold;
-      min-width:28px; text-align:center;
-    }
+    .qty-val{ font-size:20px; font-weight:bold; min-width:28px; text-align:center; }
 
-    /* preview harga di form */
     .price-preview{
-      margin-top:12px;
-      background:#fef9f0;
-      border-radius:14px;
-      padding:12px 16px;
-      font-size:14px;
-      color:#555;
-      display:none;
+      margin-top:12px; background:#fef9f0;
+      border-radius:14px; padding:12px 16px;
+      font-size:14px; color:#555; display:none;
     }
     .price-preview.show{ display:block; }
     .price-preview strong{ color:#8b5e3c; }
 
-    .btn{
-      width:100%; border:none;
-      padding:18px; border-radius:18px;
-      font-size:16px; font-weight:bold;
-      margin-top:14px; cursor:pointer;
+    /* ── ORDER ITEMS LIST ── */
+    .order-items{
+      margin-top:12px;
     }
-    .btn-primary{ background:#8b5e3c; color:white; }
+    .order-item-row{
+      display:flex; align-items:center;
+      background:#f9fafb; border-radius:12px;
+      padding:10px 14px; margin-bottom:8px;
+      gap:10px;
+    }
+    .order-item-label{
+      flex:1; font-size:13px; color:#333; line-height:1.5;
+    }
+    .order-item-del{
+      border:none; background:#fee2e2; color:#dc2626;
+      width:30px; height:30px; border-radius:50%;
+      font-size:16px; font-weight:bold; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0;
+    }
+
+    .add-item-btn{
+      width:100%; border:2px dashed #f9a8d4; background:transparent;
+      padding:14px; border-radius:16px; font-size:14px;
+      font-weight:bold; color:#8b5e3c; cursor:pointer;
+      margin-top:8px; transition:all 0.15s;
+    }
+    .add-item-btn:hover{ background:#fff0f6; }
+
+    /* ── ITEM FORM (muncul saat tambah item) ── */
+    .item-form{
+      background:#fff8f0; border-radius:16px;
+      padding:14px; margin-top:10px; display:none;
+    }
+    .item-form.show{ display:block; }
+    .item-form-btns{ display:flex; gap:8px; margin-top:12px; }
+    .item-form-btns button{
+      flex:1; border:none; padding:12px; border-radius:12px;
+      font-size:14px; font-weight:bold; cursor:pointer;
+    }
+    .item-confirm-btn{ background:#8b5e3c; color:white; }
+    .item-cancel-btn { background:#f3f4f6; color:#555; }
+
+    .btn{
+      width:100%; border:none; padding:18px;
+      border-radius:18px; font-size:16px;
+      font-weight:bold; margin-top:14px; cursor:pointer;
+    }
+    .btn-primary  { background:#8b5e3c; color:white; }
     .btn-secondary{ background:#ffe4ef; color:#8b5e3c; margin-top:10px; }
 
     /* ── QUEUE CARD ── */
@@ -126,70 +147,69 @@
       white-space:nowrap; margin-top:2px;
     }
 
-    .queue-meta{
-      margin-top:8px; font-size:13px;
-      color:#666; line-height:1.8;
-    }
+    .queue-meta{ margin-top:8px; font-size:13px; color:#666; line-height:1.8; }
     .queue-meta span{ margin-right:12px; }
 
     .ongkir-tag{
-      display:inline-block;
-      font-size:12px; font-weight:bold;
-      padding:3px 10px; border-radius:50px;
-      margin-top:4px;
+      display:inline-block; font-size:12px; font-weight:bold;
+      padding:3px 10px; border-radius:50px; margin-top:4px;
     }
     .ongkir-gratis{ background:#d1fae5; color:#065f46; }
     .ongkir-bayar { background:#fef3c7; color:#92400e; }
 
     .action-row{
-      display:flex; gap:8px; margin-top:14px;
-      flex-wrap:wrap;
+      display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;
     }
     .action-btn{
-      flex:1; border:none;
-      padding:12px 8px; border-radius:14px;
-      font-weight:bold; cursor:pointer;
-      font-size:14px; min-width:70px;
+      flex:1; border:none; padding:12px 8px;
+      border-radius:14px; font-weight:bold;
+      cursor:pointer; font-size:14px; min-width:60px;
     }
     .maps-btn{ background:#f9a8d4; color:#111; }
     .wa-btn  { background:#f9a8d4; color:#111; }
     .done-btn{ background:#d1fae5; color:#065f46; }
 
+    /* ── TOMBOL REORDER ── */
+    .reorder-btn{
+      border:none; background:#f3f4f6; color:#555;
+      width:32px; height:32px; border-radius:10px;
+      font-size:14px; cursor:pointer; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .reorder-btn:active{ background:#e5e7eb; }
+    .reorder-row{
+      display:flex; gap:6px; margin-top:10px;
+      justify-content:flex-end;
+    }
+
     .btn-primary:hover, .maps-btn:hover,
-    .wa-btn:hover, .done-btn:hover,
-    .btn-secondary:hover{
+    .wa-btn:hover, .done-btn:hover, .btn-secondary:hover{
       transform:scale(1.02); opacity:0.9;
     }
 
     /* ── MODAL REPEAT ORDER ── */
     .modal-overlay{
-      position:fixed; inset:0;
-      background:rgba(0,0,0,0.4);
+      position:fixed; inset:0; background:rgba(0,0,0,0.4);
       display:none; justify-content:center;
       align-items:flex-end; z-index:9999;
     }
     .modal-overlay.open{ display:flex; }
 
     .modal-box{
-      background:white;
-      border-radius:28px 28px 0 0;
-      padding:24px 20px;
-      width:100%; max-width:480px;
-      max-height:80vh;
-      display:flex; flex-direction:column;
+      background:white; border-radius:28px 28px 0 0;
+      padding:24px 20px; width:100%; max-width:480px;
+      max-height:80vh; display:flex; flex-direction:column;
     }
     .modal-title{ font-size:18px; font-weight:bold; margin-bottom:14px; }
 
     .modal-search{
-      width:100%; border:none;
-      background:#ffe4ef; padding:14px 18px;
-      border-radius:14px; font-size:15px;
-      margin-bottom:12px;
+      width:100%; border:none; background:#ffe4ef;
+      padding:14px 18px; border-radius:14px;
+      font-size:15px; margin-bottom:12px;
     }
     .modal-search:focus{
       background:#ffd6e7;
-      box-shadow:0 0 0 3px rgba(251,207,232,0.6);
-      outline:none;
+      box-shadow:0 0 0 3px rgba(251,207,232,0.6); outline:none;
     }
 
     .customer-list{ overflow-y:auto; flex:1; }
@@ -202,44 +222,34 @@
     .customer-item-name{ font-weight:bold; font-size:15px; }
     .customer-item-addr{ font-size:13px; color:#666; margin-top:2px; }
 
-    /* modal order detail (varian+paket untuk repeat) */
     .repeat-order-box{
       background:#fef9f0; border-radius:16px;
-      padding:16px; margin-top:12px;
-      display:none;
+      padding:16px; margin-top:12px; display:none;
     }
     .repeat-order-box.show{ display:block; }
 
     .modal-close{
       margin-top:14px; width:100%; border:none;
-      padding:14px; border-radius:14px;
-      font-weight:bold; cursor:pointer;
-      background:#f3f4f6; color:#555;
+      padding:14px; border-radius:14px; font-weight:bold;
+      cursor:pointer; background:#f3f4f6; color:#555;
     }
 
     /* ── LOADING ── */
     #loadingOverlay{
-      position:fixed; inset:0;
-      background:rgba(255,255,255,0.9);
-      display:none; justify-content:center;
-      align-items:center; z-index:99999;
+      position:fixed; inset:0; background:rgba(255,255,255,0.9);
+      display:none; justify-content:center; align-items:center; z-index:99999;
     }
     .loader-box{ text-align:center; }
     .donut-loader{ position:relative; width:70px; height:70px; margin:auto; }
-    .donut{
-      width:100%; height:100%;
-      background:#8b5e3c; border-radius:50%; position:relative;
-    }
+    .donut{ width:100%; height:100%; background:#8b5e3c; border-radius:50%; position:relative; }
     .donut::after{
-      content:""; position:absolute;
-      width:28px; height:28px; background:#ffe4ef;
-      border-radius:50%; top:50%; left:50%;
+      content:""; position:absolute; width:28px; height:28px;
+      background:#ffe4ef; border-radius:50%; top:50%; left:50%;
       transform:translate(-50%,-50%);
     }
     .sprinkle{
-      width:8px; height:8px; border-radius:50%;
-      background:#f9a8d4; position:absolute;
-      top:50%; left:50%; transform-origin:0 -28px;
+      width:8px; height:8px; border-radius:50%; background:#f9a8d4;
+      position:absolute; top:50%; left:50%; transform-origin:0 -28px;
       animation:spin 1.2s linear infinite;
     }
     .s1{ transform:rotate(0deg) translateY(-30px); }
@@ -260,31 +270,47 @@
 
   <!-- ── FORM CUSTOMER BARU ── -->
   <div class="card">
-    <input class="input" id="inputNama"  placeholder="Nama Customer">
-    <input class="input" id="inputWA"    placeholder="Nomor WhatsApp">
+    <input class="input" id="inputNama"   placeholder="Nama Customer">
+    <input class="input" id="inputWA"     placeholder="Nomor WhatsApp">
     <textarea class="input" id="inputAlamat" placeholder="Alamat"></textarea>
-    <input class="input" id="inputMaps"  placeholder="Link Google Maps">
+    <input class="input" id="inputMaps"   placeholder="Link Google Maps (opsional)">
 
-    <div class="section-label">Varian Donat</div>
-    <div class="chip-row" id="varianChips">
-      <div class="chip" data-val="Susu Vanilla"  onclick="selectChip('varian',this)">🥛 Susu Vanilla</div>
-      <div class="chip" data-val="Susu Cokelat" onclick="selectChip('varian',this)">🍫 Susu Cokelat</div>
+    <!-- DAFTAR ITEM ORDER -->
+    <div class="section-label">Pesanan</div>
+    <div class="order-items" id="orderItems"></div>
+
+    <!-- FORM TAMBAH ITEM -->
+    <button class="add-item-btn" onclick="showItemForm('main')">+ Tambah Item Pesanan</button>
+
+    <div class="item-form" id="itemFormMain">
+      <div class="section-label" style="margin-top:0">Varian Donat</div>
+      <div class="chip-row" id="varianChips">
+        <div class="chip" data-val="Susu Vanilla"  onclick="selectChip('varian',this)">🥛 Susu Vanilla</div>
+        <div class="chip" data-val="Susu Cokelat"  onclick="selectChip('varian',this)">🍫 Susu Cokelat</div>
+      </div>
+
+      <div class="section-label">Paket</div>
+      <div class="chip-row" id="paketChips">
+        <div class="chip" data-val="3_10000" onclick="selectChip('paket',this)">3 🍩 Rp10.000</div>
+        <div class="chip" data-val="6_20000" onclick="selectChip('paket',this)">6 🍩 Rp20.000</div>
+      </div>
+
+      <div class="section-label">Jumlah Paket</div>
+      <div class="qty-row">
+        <button class="qty-btn" onclick="changeQty('formQty',-1)">−</button>
+        <div class="qty-val" id="formQty">1</div>
+        <button class="qty-btn" onclick="changeQty('formQty',1)">+</button>
+      </div>
+
+      <div class="price-preview" id="formPreview"></div>
+
+      <div class="item-form-btns">
+        <button class="item-confirm-btn" onclick="addItemToOrder('main')">✓ Tambahkan</button>
+        <button class="item-cancel-btn"  onclick="hideItemForm('main')">Batal</button>
+      </div>
     </div>
 
-    <div class="section-label">Paket</div>
-    <div class="chip-row" id="paketChips">
-      <div class="chip" data-val="3_10000" onclick="selectChip('paket',this)">3 🍩 Rp10.000</div>
-      <div class="chip" data-val="6_20000" onclick="selectChip('paket',this)">6 🍩 Rp20.000</div>
-    </div>
-
-    <div class="section-label">Jumlah Paket</div>
-    <div class="qty-row">
-      <button class="qty-btn" onclick="changeQty('formQty',-1)">−</button>
-      <div class="qty-val" id="formQty">1</div>
-      <button class="qty-btn" onclick="changeQty('formQty',1)">+</button>
-    </div>
-
-    <div class="price-preview" id="formPreview"></div>
+    <div class="price-preview" id="totalPreview"></div>
 
     <button class="btn btn-primary" onclick="submitCustomer()">Submit & Set Queue</button>
   </div>
@@ -295,6 +321,14 @@
   </div>
 
   <div id="queueContainer"></div>
+  <div style="
+    text-align:center;
+    padding:24px 16px 32px;
+    font-size:13px;
+    color:#c4a08a;
+  ">
+    <strong>DONAT TETANGGA</strong> &nbsp;•&nbsp; Manisnya sampai ke rumah kamu ✨
+  </div>
 </div>
 
 <!-- ── MODAL REPEAT ORDER ── -->
@@ -307,30 +341,43 @@
       <p style="color:#aaa;text-align:center;">Loading...</p>
     </div>
 
-    <!-- Pilihan varian+paket untuk repeat order -->
     <div class="repeat-order-box" id="repeatOrderBox">
       <div style="font-weight:bold;margin-bottom:10px;" id="repeatCustomerName"></div>
 
-      <div class="section-label" style="margin-top:0">Varian Donat</div>
-      <div class="chip-row" id="repeatVarianChips">
-        <div class="chip" data-val="Susu Vanilla"  onclick="selectChip('repeatVarian',this)">🥛 Susu Vanilla</div>
-        <div class="chip" data-val="Susu Cokelat" onclick="selectChip('repeatVarian',this)">🍫 Susu Cokelat</div>
+      <!-- DAFTAR ITEM REPEAT -->
+      <div class="section-label" style="margin-top:0">Pesanan</div>
+      <div class="order-items" id="repeatOrderItems"></div>
+      <button class="add-item-btn" onclick="showItemForm('repeat')">+ Tambah Item Pesanan</button>
+
+      <div class="item-form" id="itemFormRepeat">
+        <div class="section-label" style="margin-top:0">Varian Donat</div>
+        <div class="chip-row" id="repeatVarianChips">
+          <div class="chip" data-val="Susu Vanilla"  onclick="selectChip('repeatVarian',this)">🥛 Susu Vanilla</div>
+          <div class="chip" data-val="Susu Cokelat"  onclick="selectChip('repeatVarian',this)">🍫 Susu Cokelat</div>
+        </div>
+
+        <div class="section-label">Paket</div>
+        <div class="chip-row" id="repeatPaketChips">
+          <div class="chip" data-val="3_10000" onclick="selectChip('repeatPaket',this)">3 🍩 Rp10.000</div>
+          <div class="chip" data-val="6_20000" onclick="selectChip('repeatPaket',this)">6 🍩 Rp20.000</div>
+        </div>
+
+        <div class="section-label">Jumlah Paket</div>
+        <div class="qty-row">
+          <button class="qty-btn" onclick="changeQty('repeatQty',-1)">−</button>
+          <div class="qty-val" id="repeatQty">1</div>
+          <button class="qty-btn" onclick="changeQty('repeatQty',1)">+</button>
+        </div>
+
+        <div class="price-preview" id="repeatPreview" style="margin-top:10px;"></div>
+
+        <div class="item-form-btns">
+          <button class="item-confirm-btn" onclick="addItemToOrder('repeat')">✓ Tambahkan</button>
+          <button class="item-cancel-btn"  onclick="hideItemForm('repeat')">Batal</button>
+        </div>
       </div>
 
-      <div class="section-label">Paket</div>
-      <div class="chip-row" id="repeatPaketChips">
-        <div class="chip" data-val="3_10000" onclick="selectChip('repeatPaket',this)">3 🍩 Rp10.000</div>
-        <div class="chip" data-val="6_20000" onclick="selectChip('repeatPaket',this)">6 🍩 Rp20.000</div>
-      </div>
-
-      <div class="section-label">Jumlah Paket</div>
-      <div class="qty-row">
-        <button class="qty-btn" onclick="changeQty('repeatQty',-1)">−</button>
-        <div class="qty-val" id="repeatQty">1</div>
-        <button class="qty-btn" onclick="changeQty('repeatQty',1)">+</button>
-      </div>
-
-      <div class="price-preview show" id="repeatPreview" style="margin-top:10px;"></div>
+      <div class="price-preview" id="repeatTotalPreview" style="margin-top:10px;"></div>
 
       <button class="btn btn-primary" style="margin-top:12px;" onclick="confirmRepeat()">
         Tambahkan ke Queue
@@ -358,32 +405,36 @@
 <script>
 const API_URL = 'https://script.google.com/macros/s/AKfycbwIxvVvK5RXnBmHukkZSelM25GssapmQ6a7a-CInUCae1hehXGv9fte2QifAmLsepEpPQ/exec';
 
-// state form
-let selectedVarian = '';
-let selectedPaket  = '';
-let allCustomers   = [];
-let selectedRepeatCustomer = null;
+// ── STATE ──
+let selectedVarian      = '';
+let selectedPaket       = '';
 let selectedRepeatVarian = '';
 let selectedRepeatPaket  = '';
+let allCustomers         = [];
+let selectedRepeatCustomer = null;
+
+// Array item pesanan untuk form utama dan repeat
+let orderItems       = [];   // [{ varian, tipePaket, jumlahPaket }]
+let repeatOrderItems = [];
 
 // ─────────────────────────────────────────────
 // CHIP SELECTOR
 // ─────────────────────────────────────────────
 function selectChip(group, el) {
-  const containers = {
+  const map = {
     varian      : 'varianChips',
     paket       : 'paketChips',
     repeatVarian: 'repeatVarianChips',
     repeatPaket : 'repeatPaketChips'
   };
-  const container = document.getElementById(containers[group]);
-  container.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  document.getElementById(map[group])
+    .querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
 
-  if      (group === 'varian')       { selectedVarian = el.dataset.val; updateFormPreview(); }
-  else if (group === 'paket')        { selectedPaket  = el.dataset.val; updateFormPreview(); }
-  else if (group === 'repeatVarian') { selectedRepeatVarian = el.dataset.val; updateRepeatPreview(); }
-  else if (group === 'repeatPaket')  { selectedRepeatPaket  = el.dataset.val; updateRepeatPreview(); }
+  if      (group === 'varian')       { selectedVarian       = el.dataset.val; updateItemPreview('main'); }
+  else if (group === 'paket')        { selectedPaket        = el.dataset.val; updateItemPreview('main'); }
+  else if (group === 'repeatVarian') { selectedRepeatVarian = el.dataset.val; updateItemPreview('repeat'); }
+  else if (group === 'repeatPaket')  { selectedRepeatPaket  = el.dataset.val; updateItemPreview('repeat'); }
 }
 
 // ─────────────────────────────────────────────
@@ -393,46 +444,140 @@ function changeQty(elId, delta) {
   const el  = document.getElementById(elId);
   const val = Math.max(1, parseInt(el.textContent) + delta);
   el.textContent = val;
-  if (elId === 'formQty')   updateFormPreview();
-  if (elId === 'repeatQty') updateRepeatPreview();
+  if (elId === 'formQty')   updateItemPreview('main');
+  if (elId === 'repeatQty') updateItemPreview('repeat');
 }
 
 // ─────────────────────────────────────────────
-// PRICE PREVIEW
+// ITEM FORM SHOW/HIDE
+// ─────────────────────────────────────────────
+function showItemForm(ctx) {
+  const formId = ctx === 'main' ? 'itemFormMain' : 'itemFormRepeat';
+  document.getElementById(formId).classList.add('show');
+}
+function hideItemForm(ctx) {
+  const formId = ctx === 'main' ? 'itemFormMain' : 'itemFormRepeat';
+  document.getElementById(formId).classList.remove('show');
+  resetItemForm(ctx);
+}
+
+function resetItemForm(ctx) {
+  if (ctx === 'main') {
+    selectedVarian = ''; selectedPaket = '';
+    document.getElementById('formQty').textContent = '1';
+    document.querySelectorAll('#varianChips .chip, #paketChips .chip')
+      .forEach(c => c.classList.remove('active'));
+    document.getElementById('formPreview').classList.remove('show');
+  } else {
+    selectedRepeatVarian = ''; selectedRepeatPaket = '';
+    document.getElementById('repeatQty').textContent = '1';
+    document.querySelectorAll('#repeatVarianChips .chip, #repeatPaketChips .chip')
+      .forEach(c => c.classList.remove('active'));
+    document.getElementById('repeatPreview').innerHTML = '';
+  }
+}
+
+// ─────────────────────────────────────────────
+// PREVIEW ITEM YANG SEDANG DIPILIH
 // ─────────────────────────────────────────────
 function hitungTotalJS(tipePaket, qty) {
   if (tipePaket === '3_10000') return qty * 10000;
   if (tipePaket === '6_20000') return qty * 20000;
   return 0;
 }
-function formatRp(n) {
-  return 'Rp' + n.toLocaleString('id-ID');
+function formatRp(n) { return 'Rp' + parseInt(n).toLocaleString('id-ID'); }
+
+function updateItemPreview(ctx) {
+  if (ctx === 'main') {
+    const el  = document.getElementById('formPreview');
+    const qty = parseInt(document.getElementById('formQty').textContent);
+    if (!selectedVarian || !selectedPaket) { el.classList.remove('show'); return; }
+    const total = hitungTotalJS(selectedPaket, qty);
+    const label = selectedPaket === '3_10000' ? '3 donat' : '6 donat';
+    el.innerHTML = `<strong>${selectedVarian}</strong> · ${qty}× paket ${label} = <strong>${formatRp(total)}</strong>`;
+    el.classList.add('show');
+  } else {
+    const el  = document.getElementById('repeatPreview');
+    const qty = parseInt(document.getElementById('repeatQty').textContent);
+    if (!selectedRepeatVarian || !selectedRepeatPaket) { el.innerHTML=''; el.classList.remove('show'); return; }
+    const total = hitungTotalJS(selectedRepeatPaket, qty);
+    const label = selectedRepeatPaket === '3_10000' ? '3 donat' : '6 donat';
+    el.innerHTML = `<strong>${selectedRepeatVarian}</strong> · ${qty}× paket ${label} = <strong>${formatRp(total)}</strong>`;
+    el.classList.add('show');
+  }
 }
 
-function updateFormPreview() {
-  const el  = document.getElementById('formPreview');
-  const qty = parseInt(document.getElementById('formQty').textContent);
-  if (!selectedVarian || !selectedPaket) { el.classList.remove('show'); return; }
-  const total = hitungTotalJS(selectedPaket, qty);
-  const label = selectedPaket === '3_10000' ? '3 donat' : '6 donat';
-  el.innerHTML = `
-    <strong>${selectedVarian}</strong> · ${qty}× paket ${label}<br>
-    Total: <strong>${formatRp(total)}</strong>
-    <em style="color:#aaa;font-size:12px;"> (ongkir dihitung dari jarak)</em>
-  `;
+// ─────────────────────────────────────────────
+// TAMBAH ITEM KE DAFTAR PESANAN
+// ─────────────────────────────────────────────
+function addItemToOrder(ctx) {
+  const isMain  = ctx === 'main';
+  const varian  = isMain ? selectedVarian      : selectedRepeatVarian;
+  const tipe    = isMain ? selectedPaket       : selectedRepeatPaket;
+  const qtyElId = isMain ? 'formQty'           : 'repeatQty';
+  const qty     = parseInt(document.getElementById(qtyElId).textContent);
+
+  if (!varian) { alert('Pilih varian donat'); return; }
+  if (!tipe)   { alert('Pilih paket'); return; }
+
+  const item = { varian, tipePaket: tipe, jumlahPaket: qty };
+
+  if (isMain) {
+    orderItems.push(item);
+    renderOrderItems('main');
+    updateTotalPreview('main');
+  } else {
+    repeatOrderItems.push(item);
+    renderOrderItems('repeat');
+    updateTotalPreview('repeat');
+  }
+
+  hideItemForm(ctx);
+}
+
+function removeItem(ctx, idx) {
+  if (ctx === 'main') {
+    orderItems.splice(idx, 1);
+    renderOrderItems('main');
+    updateTotalPreview('main');
+  } else {
+    repeatOrderItems.splice(idx, 1);
+    renderOrderItems('repeat');
+    updateTotalPreview('repeat');
+  }
+}
+
+function renderOrderItems(ctx) {
+  const items    = ctx === 'main' ? orderItems : repeatOrderItems;
+  const el       = document.getElementById(ctx === 'main' ? 'orderItems' : 'repeatOrderItems');
+
+  if (items.length === 0) { el.innerHTML = ''; return; }
+
+  el.innerHTML = items.map((item, idx) => {
+    const label = item.tipePaket === '3_10000' ? '3 donat' : '6 donat';
+    const total = hitungTotalJS(item.tipePaket, item.jumlahPaket);
+    return `
+      <div class="order-item-row">
+        <div class="order-item-label">
+          🍩 <strong>${item.varian}</strong><br>
+          ${item.jumlahPaket}× paket ${label} — ${formatRp(total)}
+        </div>
+        <button class="order-item-del" onclick="removeItem('${ctx}', ${idx})">×</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateTotalPreview(ctx) {
+  const items  = ctx === 'main' ? orderItems : repeatOrderItems;
+  const elId   = ctx === 'main' ? 'totalPreview' : 'repeatTotalPreview';
+  const el     = document.getElementById(elId);
+
+  if (items.length === 0) { el.classList.remove('show'); return; }
+
+  const total = items.reduce((s, i) => s + hitungTotalJS(i.tipePaket, i.jumlahPaket), 0);
+  el.innerHTML = `Total Pesanan: <strong>${formatRp(total)}</strong> <em style="color:#aaa;font-size:12px;">(ongkir dihitung dari jarak)</em>`;
   el.classList.add('show');
-}
-
-function updateRepeatPreview() {
-  const el  = document.getElementById('repeatPreview');
-  const qty = parseInt(document.getElementById('repeatQty').textContent);
-  if (!selectedRepeatVarian || !selectedRepeatPaket) { el.innerHTML=''; return; }
-  const total = hitungTotalJS(selectedRepeatPaket, qty);
-  const label = selectedRepeatPaket === '3_10000' ? '3 donat' : '6 donat';
-  el.innerHTML = `
-    <strong>${selectedRepeatVarian}</strong> · ${qty}× paket ${label}<br>
-    Total: <strong>${formatRp(total)}</strong>
-  `;
 }
 
 // ─────────────────────────────────────────────
@@ -442,14 +587,14 @@ async function submitCustomer() {
   const nama   = document.getElementById('inputNama').value.trim();
   const wa     = document.getElementById('inputWA').value.trim();
   const alamat = document.getElementById('inputAlamat').value.trim();
-  const maps   = document.getElementById('inputMaps').value.trim();
-  const qty    = parseInt(document.getElementById('formQty').textContent);
+  const maps   = document.getElementById('inputMaps').value.trim();  // opsional
 
-  if (!nama || !wa || !alamat || !maps) {
-    alert('Nama, WA, Alamat, dan Link Maps harus diisi'); return;
+  if (!nama || !wa || !alamat) {
+    alert('Nama, WA, dan Alamat harus diisi'); return;
   }
-  if (!selectedVarian) { alert('Pilih varian donat dulu'); return; }
-  if (!selectedPaket)  { alert('Pilih paket dulu'); return; }
+  if (orderItems.length === 0) {
+    alert('Tambahkan minimal 1 item pesanan'); return;
+  }
 
   showLoading();
 
@@ -460,13 +605,13 @@ async function submitCustomer() {
 
     // Step 2: masukkan ke queue
     const r2 = await post('addNewToQueue', {
-      customerID  : r1.customerID,
-      nama, wa    : normalizeWA(wa), maps,
-      lat         : r1.lat,
-      lng         : r1.lng,
-      varian      : selectedVarian,
-      tipePaket   : selectedPaket,
-      jumlahPaket : qty
+      customerID : r1.customerID,
+      nama,
+      wa         : normalizeWA(wa),
+      maps,
+      lat        : r1.lat,
+      lng        : r1.lng,
+      items      : orderItems
     });
 
     hideLoading();
@@ -476,14 +621,13 @@ async function submitCustomer() {
     ['inputNama','inputWA','inputAlamat','inputMaps'].forEach(id => {
       document.getElementById(id).value = '';
     });
-    document.getElementById('formQty').textContent = '1';
-    document.querySelectorAll('#varianChips .chip, #paketChips .chip')
-      .forEach(c => c.classList.remove('active'));
-    selectedVarian = ''; selectedPaket = '';
-    document.getElementById('formPreview').classList.remove('show');
+    orderItems = [];
+    renderOrderItems('main');
+    updateTotalPreview('main');
+    document.getElementById('itemFormMain').classList.remove('show');
+    resetItemForm('main');
 
     loadQueue();
-
   } catch(err) {
     hideLoading();
     alert('Gagal koneksi: ' + err.message);
@@ -509,35 +653,44 @@ function renderQueue(data) {
     return;
   }
 
-  let html = '';
-  pending.forEach(item => {
+  container.innerHTML = pending.map((item, idx) => {
     const ongkirVal  = parseInt(item.ongkir) || 0;
     const ongkirText = ongkirVal === 0
       ? '<span class="ongkir-tag ongkir-gratis">🎉 Gratis Ongkir</span>'
       : '<span class="ongkir-tag ongkir-bayar">🛵 Ongkir ' + formatRp(ongkirVal) + '</span>';
 
-    const labelPaket = item.tipePaket === '3_10000' ? '3 donat' : item.tipePaket === '6_20000' ? '6 donat' : '-';
     const totalHarga = parseInt(item.totalHarga) || 0;
+    const distLabel  = parseFloat(item.distance) >= 9999 ? 'Tanpa Maps' : item.distance + ' KM';
 
-    // data-* attributes menghindari masalah escaping di onclick
-    html += `
+    // Render detail items
+    let itemsHtml = '';
+    if (item.items && item.items.length > 0) {
+      itemsHtml = item.items.map(i => {
+        const lb = i.tipePaket === '3_10000' ? '3 donat' : '6 donat';
+        return `<span>🍩 ${i.varian} · ${i.jumlahPaket}× paket ${lb}</span><br>`;
+      }).join('');
+    } else {
+      itemsHtml = `<span>🍩 ${item.varianRingkas || '-'}</span><br>`;
+    }
+
+    const isFirst = idx === 0;
+    const isLast  = idx === pending.length - 1;
+
+    return `
       <div class="queue-item" id="qi-${item.queueID}"
         data-qid="${item.queueID}"
         data-wa="${item.wa || ''}"
         data-urutan="${item.urutan}"
         data-nama="${(item.nama || '').replace(/"/g,'&quot;')}"
-        data-varian="${(item.varian || '').replace(/"/g,'&quot;')}"
-        data-jumlah="${item.jumlahPaket || 1}"
-        data-tipe="${item.tipePaket || ''}"
+        data-items='${JSON.stringify(item.items || []).replace(/'/g,"&#39;")}'
         data-ongkir="${ongkirVal}"
         data-maps="${(item.maps || '').replace(/"/g,'&quot;')}">
         <div class="queue-header">
           <div class="queue-title">#${item.urutan} ${item.nama}</div>
-          <div class="queue-badge">${item.distance} KM</div>
+          <div class="queue-badge">${distLabel}</div>
         </div>
         <div class="queue-meta">
-          <span>🍩 ${item.varian || '-'}</span>
-          <span>📦 ${item.jumlahPaket}× paket ${labelPaket}</span><br>
+          ${itemsHtml}
           <span>💰 ${formatRp(totalHarga)}</span>
           ${ongkirText}
         </div>
@@ -546,22 +699,25 @@ function renderQueue(data) {
           <button class="action-btn wa-btn"   onclick="openWAFromCard(this)">WhatsApp</button>
           <button class="action-btn done-btn" onclick="markDoneFromCard(this)">✓ Selesai</button>
         </div>
+        <div class="reorder-row">
+          <button class="reorder-btn" onclick="reorder('${item.queueID}','up')"   ${isFirst ? 'disabled style="opacity:0.3"' : ''}>▲</button>
+          <button class="reorder-btn" onclick="reorder('${item.queueID}','down')" ${isLast  ? 'disabled style="opacity:0.3"' : ''}>▼</button>
+        </div>
       </div>
     `;
-  });
-  container.innerHTML = html;
+  }).join('');
 }
 
 function getCardData(btn) {
   const card = btn.closest('.queue-item');
+  let items = [];
+  try { items = JSON.parse(card.dataset.items || '[]'); } catch(e) {}
   return {
     queueID : card.dataset.qid,
     wa      : card.dataset.wa,
     urutan  : card.dataset.urutan,
     nama    : card.dataset.nama,
-    varian  : card.dataset.varian,
-    jumlah  : parseInt(card.dataset.jumlah),
-    tipe    : card.dataset.tipe,
+    items   : items,
     ongkir  : parseInt(card.dataset.ongkir),
     maps    : card.dataset.maps
   };
@@ -576,7 +732,7 @@ function openMapsFromCard(btn) {
 
 function openWAFromCard(btn) {
   const d = getCardData(btn);
-  openWA(d.wa, d.urutan, d.nama, d.varian, d.jumlah, d.tipe, d.ongkir);
+  openWA(d.wa, d.urutan, d.nama, d.items, d.ongkir);
 }
 
 async function markDoneFromCard(btn) {
@@ -588,17 +744,23 @@ async function markDoneFromCard(btn) {
 
   try {
     const r = await post('completeQueue', { queueID });
-    if (r.success) {
-      if (el) el.remove();
-      loadQueue();
-    } else {
-      alert(r.message);
-      if (el) el.classList.remove('removing');
-    }
+    if (r.success) { if (el) el.remove(); loadQueue(); }
+    else { alert(r.message); if (el) el.classList.remove('removing'); }
   } catch(err) {
     alert('Gagal koneksi');
     if (el) el.classList.remove('removing');
   }
+}
+
+// ─────────────────────────────────────────────
+// REORDER MANUAL ▲▼
+// ─────────────────────────────────────────────
+async function reorder(queueID, direction) {
+  try {
+    const r = await post('reorderQueue', { queueID, direction });
+    if (r.success) loadQueue();
+    else alert(r.message);
+  } catch(err) { alert('Gagal reorder'); }
 }
 
 // ─────────────────────────────────────────────
@@ -609,8 +771,10 @@ async function openRepeatModal() {
   document.getElementById('customerSearch').value = '';
   document.getElementById('repeatOrderBox').classList.remove('show');
   selectedRepeatCustomer = null;
-  selectedRepeatVarian   = '';
-  selectedRepeatPaket    = '';
+  repeatOrderItems = [];
+  renderOrderItems('repeat');
+  updateTotalPreview('repeat');
+  resetItemForm('repeat');
 
   try {
     allCustomers = await post('getCustomers', {});
@@ -627,7 +791,6 @@ function closeRepeatModal() {
 function closeModalIfOutside(e) {
   if (e.target.id === 'repeatModal') closeRepeatModal();
 }
-
 function filterCustomers() {
   const q = document.getElementById('customerSearch').value.toLowerCase();
   renderCustomerList(allCustomers.filter(c =>
@@ -635,7 +798,6 @@ function filterCustomers() {
     (c.alamat && c.alamat.toLowerCase().includes(q))
   ));
 }
-
 function renderCustomerList(list) {
   const el = document.getElementById('customerList');
   if (!list || list.length === 0) {
@@ -643,7 +805,7 @@ function renderCustomerList(list) {
     return;
   }
   el.innerHTML = list.map(c => `
-    <div class="customer-item" onclick="selectRepeatCustomer('${c.customerID}', '${c.nama}', '${c.alamat || ''}')">
+    <div class="customer-item" onclick="selectRepeatCustomer('${c.customerID}','${c.nama.replace(/'/g,"\\'")}','${(c.alamat||'').replace(/'/g,"\\'")}')">
       <div class="customer-item-name">${c.nama}</div>
       <div class="customer-item-addr">${c.alamat || '-'}</div>
     </div>
@@ -652,36 +814,27 @@ function renderCustomerList(list) {
 
 function selectRepeatCustomer(customerID, nama, alamat) {
   selectedRepeatCustomer = customerID;
-
-  // Reset pilihan
-  document.getElementById('repeatQty').textContent = '1';
-  document.querySelectorAll('#repeatVarianChips .chip, #repeatPaketChips .chip')
-    .forEach(c => c.classList.remove('active'));
-  selectedRepeatVarian = '';
-  selectedRepeatPaket  = '';
-  document.getElementById('repeatPreview').innerHTML = '';
-
+  repeatOrderItems = [];
+  renderOrderItems('repeat');
+  updateTotalPreview('repeat');
+  resetItemForm('repeat');
+  document.getElementById('itemFormRepeat').classList.remove('show');
   document.getElementById('repeatCustomerName').textContent = '🍩 ' + nama;
   document.getElementById('repeatOrderBox').classList.add('show');
   document.getElementById('customerList').scrollTop = 0;
 }
 
 async function confirmRepeat() {
-  if (!selectedRepeatCustomer) { alert('Pilih customer dulu'); return; }
-  if (!selectedRepeatVarian)   { alert('Pilih varian donat'); return; }
-  if (!selectedRepeatPaket)    { alert('Pilih paket'); return; }
-
-  const qty = parseInt(document.getElementById('repeatQty').textContent);
+  if (!selectedRepeatCustomer)     { alert('Pilih customer dulu'); return; }
+  if (repeatOrderItems.length === 0) { alert('Tambahkan minimal 1 item pesanan'); return; }
 
   closeRepeatModal();
   showLoading();
 
   try {
     const r = await post('addRepeatToQueue', {
-      customerID  : selectedRepeatCustomer,
-      tipePaket   : selectedRepeatPaket,
-      jumlahPaket : qty,
-      varian      : selectedRepeatVarian
+      customerID : selectedRepeatCustomer,
+      items      : repeatOrderItems
     });
     hideLoading();
     alert(r.message);
@@ -693,23 +846,29 @@ async function confirmRepeat() {
 }
 
 // ─────────────────────────────────────────────
-// WHATSAPP
+// WHATSAPP — multi item
 // ─────────────────────────────────────────────
-function openWA(number, queue, name, varian, jumlah, tipePaket, ongkir) {
-  const labelPaket = tipePaket === '3_10000' ? '3 donat' : '6 donat';
-  const hargaPaket = tipePaket === '3_10000' ? 10000 : 20000;
-  const total      = jumlah * hargaPaket;
+function openWA(number, queue, nama, items, ongkir) {
   const ongkirText = ongkir === 0 ? 'GRATIS 🎉' : formatRp(ongkir);
 
+  let detailLines = '';
+  let grandTotal  = 0;
+  (items || []).forEach(item => {
+    const lb    = item.tipePaket === '3_10000' ? '3 donat' : '6 donat';
+    const hp    = item.tipePaket === '3_10000' ? 10000 : 20000;
+    const total = item.jumlahPaket * hp;
+    grandTotal += total;
+    detailLines += `\n🍩 ${item.varian} · ${item.jumlahPaket}× paket ${lb} = ${formatRp(total)}`;
+  });
+
   const msg = [
-    `Halo Kak ${name} 👋`,
+    `Halo Kak ${nama} 👋`,
     ``,
     `🎁 Pesanan donat sedang dalam proses pengantaran, pastikan Kakak ada di tempat yaa 👒`,
     ``,
-    `📋 Detail Pesanan:`,
-    `🍩 Varian   : ${varian}`,
-    `📦 Paket    : ${jumlah}× (${labelPaket})`,
-    `💰 Total    : ${formatRp(total)}`,
+    `📋 Detail Pesanan:${detailLines}`,
+    ``,
+    `💰 Total    : ${formatRp(grandTotal)}`,
     `🛵 Ongkir   : ${ongkirText}`,
     ``,
     `🎟️ Nomor antrian: #${queue}`,
@@ -724,12 +883,6 @@ function openWA(number, queue, name, varian, jumlah, tipePaket, ongkir) {
 // ─────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────
-function openMaps(url) {
-  if (!url) { alert('Maps tidak tersedia'); return; }
-  if (!url.startsWith('http')) url = 'https://' + url;
-  window.open(url, '_blank');
-}
-
 function normalizeWA(number) {
   number = number.toString().trim();
   if (number.startsWith('08'))  return '62' + number.substring(1);
@@ -738,20 +891,22 @@ function normalizeWA(number) {
 }
 
 async function post(action, data) {
-  const response = await fetch(API_URL + '?action=' + action, {
-    method  : 'POST',
-    headers : { 'Content-Type': 'text/plain' },
-    body    : JSON.stringify(data)
+  const res = await fetch(API_URL + '?action=' + action, {
+    method : 'POST', headers: { 'Content-Type': 'text/plain' },
+    body   : JSON.stringify(data)
   });
-  return response.json();
+  return res.json();
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
 function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
 
-window.onload = loadQueue;
-</script>
+window.onload = function(){
+  loadQueue();
+  updateClock();
+  setInterval(updateClock, 1000);
+};
 
 </body>
 </html>
