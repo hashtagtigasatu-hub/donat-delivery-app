@@ -20,6 +20,7 @@
       box-shadow:0 2px 10px rgba(0,0,0,.05);
     }
     .title{ font-size:24px; font-weight:bold; }
+
     .header-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
     .header-datetime{ text-align:right; line-height:1.4; }
     .header-time{ font-size:18px; font-weight:bold; color:#8b5e3c; }
@@ -263,7 +264,13 @@
 <body>
 
 <div class="header">
-  <div class="title">Donat Tetangga 🍩</div>
+  <div class="header-row">
+    <div class="title">Donat Tetangga 🍩</div>
+    <div class="header-datetime">
+      <div class="header-time" id="headerTime"></div>
+      <div class="header-date" id="headerDate"></div>
+    </div>
+  </div>
 </div>
 
 <div class="container">
@@ -321,6 +328,7 @@
   </div>
 
   <div id="queueContainer"></div>
+
   <div style="
     text-align:center;
     padding:24px 16px 32px;
@@ -329,6 +337,7 @@
   ">
     <strong>DONAT TETANGGA</strong> &nbsp;•&nbsp; Manisnya sampai ke rumah kamu ✨
   </div>
+
 </div>
 
 <!-- ── MODAL REPEAT ORDER ── -->
@@ -902,11 +911,24 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
 function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
 
+function updateClock(){
+  const now  = new Date();
+  const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+  const months = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+  const hh   = String(now.getHours()).padStart(2,"0");
+  const mm   = String(now.getMinutes()).padStart(2,"0");
+  const ss   = String(now.getSeconds()).padStart(2,"0");
+  document.getElementById("headerTime").textContent = hh + ":" + mm + ":" + ss;
+  document.getElementById("headerDate").textContent =
+    days[now.getDay()] + ", " + now.getDate() + " " + months[now.getMonth()] + " " + now.getFullYear();
+}
+
 window.onload = function(){
   loadQueue();
   updateClock();
   setInterval(updateClock, 1000);
 };
+</script>
 
 </body>
 </html>
