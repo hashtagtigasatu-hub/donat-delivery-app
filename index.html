@@ -98,6 +98,32 @@
       flex-shrink:0;
     }
 
+    /* ── INPUT SATUAN ── */
+    .satuan-box{
+      display:none; align-items:center; gap:8px;
+      background:#f0fdf4; border-radius:12px;
+      padding:10px 14px; margin-top:10px;
+    }
+    .satuan-box.show{ display:flex; }
+    .satuan-label{ font-size:13px; color:#555; white-space:nowrap; }
+    .satuan-input{
+      width:64px; border:2px solid #86efac;
+      background:white; padding:8px 10px;
+      border-radius:10px; font-size:16px;
+      font-weight:bold; text-align:center;
+      color:#111;
+    }
+    .satuan-input:focus{ outline:none; border-color:#22c55e; }
+    .satuan-toggle{
+      border:2px solid #f9a8d4; background:white;
+      padding:8px 14px; border-radius:50px;
+      font-size:13px; font-weight:bold;
+      cursor:pointer; color:#555; white-space:nowrap;
+      transition:all 0.15s;
+    }
+    .satuan-toggle.active{ background:#8b5e3c; border-color:#8b5e3c; color:white; }
+
+
     .add-item-btn{
       width:100%; border:2px dashed #f9a8d4; background:transparent;
       padding:14px; border-radius:16px; font-size:14px;
@@ -310,6 +336,12 @@
         <button class="qty-btn" onclick="changeQty('formQty',1)">+</button>
       </div>
 
+      <div class="satuan-box" id="satuanBoxMain">
+        <span class="satuan-label">🍩 Jumlah satuan:</span>
+        <input class="satuan-input" id="satuanMain" type="number" min="1" value="1"
+          oninput="updateItemPreview('main')">
+      </div>
+
       <div class="price-preview" id="formPreview"></div>
 
       <div class="item-form-btns">
@@ -377,6 +409,13 @@
           <button class="qty-btn" onclick="changeQty('repeatQty',-1)">−</button>
           <div class="qty-val" id="repeatQty">1</div>
           <button class="qty-btn" onclick="changeQty('repeatQty',1)">+</button>
+          <button class="satuan-toggle" id="satuanToggleRepeat" onclick="toggleSatuan('repeat')">Satuan</button>
+        </div>
+
+        <div class="satuan-box" id="satuanBoxRepeat">
+          <span class="satuan-label">🍩 Jumlah satuan:</span>
+          <input class="satuan-input" id="satuanRepeat" type="number" min="1" value="1"
+            oninput="updateItemPreview('repeat')">
         </div>
 
         <div class="price-preview" id="repeatPreview" style="margin-top:10px;"></div>
@@ -478,14 +517,50 @@ function resetItemForm(ctx) {
     document.querySelectorAll('#varianChips .chip, #paketChips .chip')
       .forEach(c => c.classList.remove('active'));
     document.getElementById('formPreview').classList.remove('show');
+    // reset satuan
+    document.getElementById('satuanBoxMain').classList.remove('show');
+    document.getElementById('satuanToggleMain').classList.remove('active');
+    document.getElementById('satuanMain').value = '1';
   } else {
     selectedRepeatVarian = ''; selectedRepeatPaket = '';
     document.getElementById('repeatQty').textContent = '1';
     document.querySelectorAll('#repeatVarianChips .chip, #repeatPaketChips .chip')
       .forEach(c => c.classList.remove('active'));
     document.getElementById('repeatPreview').innerHTML = '';
+    // reset satuan
+    document.getElementById('satuanBoxRepeat').classList.remove('show');
+    document.getElementById('satuanToggleRepeat').classList.remove('active');
+    document.getElementById('satuanRepeat').value = '1';
   }
 }
+
+  // ── TOGGLE INPUT SATUAN ──
+function toggleSatuan(ctx) {
+  const box     = document.getElementById(ctx === 'main' ? 'satuanBoxMain'     : 'satuanBoxRepeat');
+  const toggle  = document.getElementById(ctx === 'main' ? 'satuanToggleMain'  : 'satuanToggleRepeat');
+  const isOpen  = box.classList.contains('show');
+  if (isOpen) {
+    box.classList.remove('show');
+    toggle.classList.remove('active');
+    toggle.textContent = '+ Satuan';
+  } else {
+    box.classList.add('show');
+    toggle.classList.add('active');
+    toggle.textContent = '✕ Satuan';
+    updateItemPreview(ctx);
+  }
+}
+
+// Helper: apakah mode satuan aktif?
+function isSatuanMode(ctx) {
+  const box = document.getElementById(ctx === 'main' ? 'satuanBoxMain' : 'satuanBoxRepeat');
+  return box.classList.contains('show');
+}
+function getSatuanQty(ctx) {
+  const val = parseInt(document.getElementById(ctx === 'main' ? 'satuanMain' : 'satuanRepeat').value) || 1;
+  return Math.max(1, val);
+}
+
 
 // ─────────────────────────────────────────────
 // PREVIEW ITEM YANG SEDANG DIPILIH
@@ -493,27 +568,51 @@ function resetItemForm(ctx) {
 function hitungTotalJS(tipePaket, qty) {
   if (tipePaket === '3_10000') return qty * 10000;
   if (tipePaket === '6_20000') return qty * 20000;
+  if (tipePaket === 'satuan')  return totalSatuan || Math.round(qty * 10000 / 3);
   return 0;
 }
 function formatRp(n) { return 'Rp' + parseInt(n).toLocaleString('id-ID'); }
 
 function updateItemPreview(ctx) {
   if (ctx === 'main') {
-    const el  = document.getElementById('formPreview');
-    const qty = parseInt(document.getElementById('formQty').textContent);
-    if (!selectedVarian || !selectedPaket) { el.classList.remove('show'); return; }
-    const total = hitungTotalJS(selectedPaket, qty);
-    const label = selectedPaket === '3_10000' ? '3 donat' : '6 donat';
-    el.innerHTML = `<strong>${selectedVarian}</strong> · ${qty}× paket ${label} = <strong>${formatRp(total)}</strong>`;
-    el.classList.add('show');
+    const el     = document.getElementById('formPreview');
+    const varian = selectedVarian;
+    const tipe   = selectedPaket;
+    if (!varian) { el.classList.remove('show'); return; }
+
+    if (isSatuanMode('main')) {
+      // mode satuan — paket tidak wajib
+      const qty   = getSatuanQty('main');
+      const harga = qty * 10000 / 3; // Rp10.000 / 3 donat = per satuan
+      // tampilkan preview satuan saja, harga dihitung di addItem
+      el.innerHTML = `<strong>${varian}</strong> · ${qty} donat satuan`;
+      el.classList.add('show');
+    } else {
+      if (!tipe) { el.classList.remove('show'); return; }
+      const qty   = parseInt(document.getElementById('formQty').textContent);
+      const total = hitungTotalJS(tipe, qty);
+      const label = tipe === '3_10000' ? '3 donat' : '6 donat';
+      el.innerHTML = `<strong>${varian}</strong> · ${qty}× paket ${label} = <strong>${formatRp(total)}</strong>`;
+      el.classList.add('show');
+    }
   } else {
-    const el  = document.getElementById('repeatPreview');
-    const qty = parseInt(document.getElementById('repeatQty').textContent);
-    if (!selectedRepeatVarian || !selectedRepeatPaket) { el.innerHTML=''; el.classList.remove('show'); return; }
-    const total = hitungTotalJS(selectedRepeatPaket, qty);
-    const label = selectedRepeatPaket === '3_10000' ? '3 donat' : '6 donat';
-    el.innerHTML = `<strong>${selectedRepeatVarian}</strong> · ${qty}× paket ${label} = <strong>${formatRp(total)}</strong>`;
-    el.classList.add('show');
+    const el     = document.getElementById('repeatPreview');
+    const varian = selectedRepeatVarian;
+    const tipe   = selectedRepeatPaket;
+    if (!varian) { el.innerHTML=''; el.classList.remove('show'); return; }
+
+    if (isSatuanMode('repeat')) {
+      const qty = getSatuanQty('repeat');
+      el.innerHTML = `<strong>${varian}</strong> · ${qty} donat satuan`;
+      el.classList.add('show');
+    } else {
+      if (!tipe) { el.innerHTML=''; el.classList.remove('show'); return; }
+      const qty   = parseInt(document.getElementById('repeatQty').textContent);
+      const total = hitungTotalJS(tipe, qty);
+      const label = tipe === '3_10000' ? '3 donat' : '6 donat';
+      el.innerHTML = `<strong>${varian}</strong> · ${qty}× paket ${label} = <strong>${formatRp(total)}</strong>`;
+      el.classList.add('show');
+    }
   }
 }
 
@@ -521,16 +620,26 @@ function updateItemPreview(ctx) {
 // TAMBAH ITEM KE DAFTAR PESANAN
 // ─────────────────────────────────────────────
 function addItemToOrder(ctx) {
-  const isMain  = ctx === 'main';
-  const varian  = isMain ? selectedVarian      : selectedRepeatVarian;
-  const tipe    = isMain ? selectedPaket       : selectedRepeatPaket;
-  const qtyElId = isMain ? 'formQty'           : 'repeatQty';
-  const qty     = parseInt(document.getElementById(qtyElId).textContent);
+  const isMain = ctx === 'main';
+  const varian = isMain ? selectedVarian : selectedRepeatVarian;
 
   if (!varian) { alert('Pilih varian donat'); return; }
-  if (!tipe)   { alert('Pilih paket'); return; }
 
-  const item = { varian, tipePaket: tipe, jumlahPaket: qty };
+  let item;
+
+  if (isSatuanMode(ctx)) {
+    // Mode satuan — paket tidak wajib, harga proporsional Rp10.000/3 donat
+    const qty        = getSatuanQty(ctx);
+    const hargaSatuan = Math.round(10000 / 3); // ~Rp3.333/donat
+    const total      = qty * hargaSatuan;
+    item = { varian, tipePaket: 'satuan', jumlahPaket: qty, totalSatuan: total };
+  } else {
+    const tipe    = isMain ? selectedPaket : selectedRepeatPaket;
+    const qtyElId = isMain ? 'formQty'     : 'repeatQty';
+    const qty     = parseInt(document.getElementById(qtyElId).textContent);
+    if (!tipe) { alert('Pilih paket'); return; }
+    item = { varian, tipePaket: tipe, jumlahPaket: qty };
+  }
 
   if (isMain) {
     orderItems.push(item);
@@ -558,19 +667,26 @@ function removeItem(ctx, idx) {
 }
 
 function renderOrderItems(ctx) {
-  const items    = ctx === 'main' ? orderItems : repeatOrderItems;
-  const el       = document.getElementById(ctx === 'main' ? 'orderItems' : 'repeatOrderItems');
+  const items = ctx === 'main' ? orderItems : repeatOrderItems;
+  const el    = document.getElementById(ctx === 'main' ? 'orderItems' : 'repeatOrderItems');
 
   if (items.length === 0) { el.innerHTML = ''; return; }
 
   el.innerHTML = items.map((item, idx) => {
-    const label = item.tipePaket === '3_10000' ? '3 donat' : '6 donat';
-    const total = hitungTotalJS(item.tipePaket, item.jumlahPaket);
+    let desc, total;
+    if (item.tipePaket === 'satuan') {
+      total = hitungTotalJS('satuan', item.jumlahPaket, item.totalSatuan);
+      desc  = `${item.jumlahPaket} donat satuan — ${formatRp(total)}`;
+    } else {
+      const label = item.tipePaket === '3_10000' ? '3 donat' : '6 donat';
+      total = hitungTotalJS(item.tipePaket, item.jumlahPaket);
+      desc  = `${item.jumlahPaket}× paket ${label} — ${formatRp(total)}`;
+    }
     return `
       <div class="order-item-row">
         <div class="order-item-label">
           🍩 <strong>${item.varian}</strong><br>
-          ${item.jumlahPaket}× paket ${label} — ${formatRp(total)}
+          ${desc}
         </div>
         <button class="order-item-del" onclick="removeItem('${ctx}', ${idx})">×</button>
       </div>
@@ -579,13 +695,13 @@ function renderOrderItems(ctx) {
 }
 
 function updateTotalPreview(ctx) {
-  const items  = ctx === 'main' ? orderItems : repeatOrderItems;
-  const elId   = ctx === 'main' ? 'totalPreview' : 'repeatTotalPreview';
-  const el     = document.getElementById(elId);
+  const items = ctx === 'main' ? orderItems : repeatOrderItems;
+  const elId  = ctx === 'main' ? 'totalPreview' : 'repeatTotalPreview';
+  const el    = document.getElementById(elId);
 
   if (items.length === 0) { el.classList.remove('show'); return; }
 
-  const total = items.reduce((s, i) => s + hitungTotalJS(i.tipePaket, i.jumlahPaket), 0);
+  const total = items.reduce((s, i) => s + hitungTotalJS(i.tipePaket, i.jumlahPaket, i.totalSatuan), 0);
   el.innerHTML = `Total Pesanan: <strong>${formatRp(total)}</strong> <em style="color:#aaa;font-size:12px;">(ongkir dihitung dari jarak)</em>`;
   el.classList.add('show');
 }
@@ -676,8 +792,9 @@ function renderQueue(data) {
     let itemsHtml = '';
     if (item.items && item.items.length > 0) {
       itemsHtml = item.items.map(i => {
-        const lb = i.tipePaket === '3_10000' ? '3 donat' : '6 donat';
-        return `<span>🍩 ${i.varian} · ${i.jumlahPaket}× paket ${lb}</span><br>`;
+        const lb = i.tipePaket === 'satuan' ? 'satuan' : i.tipePaket === '3_10000' ? '3 donat' : '6 donat';
+        const sfx = i.tipePaket === 'satuan' ? i.jumlahPaket + ' donat satuan' : i.jumlahPaket + '× paket ' + lb;
+        return `<span>🍩 ${i.varian} · ${sfx}</span><br>`;
       }).join('');
     } else {
       itemsHtml = `<span>🍩 ${item.varianRingkas || '-'}</span><br>`;
@@ -864,9 +981,8 @@ function openWA(number, queue, nama, items, ongkir) {
   let detailLines = '';
   let grandTotal  = 0;
   (items || []).forEach(item => {
-    const lb    = item.tipePaket === '3_10000' ? '3 donat' : '6 donat';
-    const hp    = item.tipePaket === '3_10000' ? 10000 : 20000;
-    const total = item.jumlahPaket * hp;
+    const lb    = item.tipePaket === 'satuan' ? 'satuan' : item.tipePaket === '3_10000' ? '3 donat' : '6 donat';
+    const total = hitungTotalJS(item.tipePaket, item.jumlahPaket, item.totalSatuan);
     grandTotal += total;
     detailLines += `\n🍩 ${item.varian} · ${item.jumlahPaket}× paket ${lb} = ${formatRp(total)}`;
   });
