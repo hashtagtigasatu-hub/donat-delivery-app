@@ -123,7 +123,6 @@
     }
     .satuan-toggle.active{ background:#8b5e3c; border-color:#8b5e3c; color:white; }
 
-
     .add-item-btn{
       width:100%; border:2px dashed #f9a8d4; background:transparent;
       padding:14px; border-radius:16px; font-size:14px;
@@ -292,7 +291,7 @@
 
 <div class="header">
   <div class="header-row">
-    <div class="title">🍩 TETANGGA</div>
+    <div class="title">Donat Tetangga 🍩</div>
     <div class="header-datetime">
       <div class="header-time" id="headerTime"></div>
       <div class="header-date" id="headerDate"></div>
@@ -314,7 +313,7 @@
     <div class="order-items" id="orderItems"></div>
 
     <!-- FORM TAMBAH ITEM -->
-    <button class="add-item-btn" onclick="showItemForm('main')">Tambah Item Pesanan</button>
+    <button class="add-item-btn" onclick="showItemForm('main')">+ Tambah Item Pesanan</button>
 
     <div class="item-form" id="itemFormMain">
       <div class="section-label" style="margin-top:0">Varian Donat</div>
@@ -334,8 +333,8 @@
         <button class="qty-btn" onclick="changeQty('formQty',-1)">−</button>
         <div class="qty-val" id="formQty">1</div>
         <button class="qty-btn" onclick="changeQty('formQty',1)">+</button>
+        <button class="satuan-toggle" id="satuanToggleMain" onclick="toggleSatuan('main')">+ Satuan</button>
       </div>
-
       <div class="satuan-box" id="satuanBoxMain">
         <span class="satuan-label">🍩 Jumlah satuan:</span>
         <input class="satuan-input" id="satuanMain" type="number" min="1" value="1"
@@ -357,7 +356,7 @@
 
   <!-- ── REPEAT ORDER ── -->
   <div class="card">
-    <button class="btn btn-secondary" style="margin-top:0" onclick="openRepeatModal()">Repeat Order</button>
+    <button class="btn btn-secondary" style="margin-top:0" onclick="openRepeatModal()">+ Repeat Order</button>
   </div>
 
   <div id="queueContainer"></div>
@@ -368,7 +367,7 @@
     font-size:13px;
     color:#c4a08a;
   ">
-    <strong>DONAT TETANGGA</strong> &nbsp;•&nbsp; Manisnya sampai ke rumah kamu
+    <strong>DONAT TETANGGA</strong> &nbsp;•&nbsp; Manisnya sampai ke rumah kamu ✨
   </div>
 
 </div>
@@ -389,7 +388,7 @@
       <!-- DAFTAR ITEM REPEAT -->
       <div class="section-label" style="margin-top:0">Pesanan</div>
       <div class="order-items" id="repeatOrderItems"></div>
-      <button class="add-item-btn" onclick="showItemForm('repeat')">Tambah Item Pesanan</button>
+      <button class="add-item-btn" onclick="showItemForm('repeat')">+ Tambah Item Pesanan</button>
 
       <div class="item-form" id="itemFormRepeat">
         <div class="section-label" style="margin-top:0">Varian Donat</div>
@@ -409,9 +408,8 @@
           <button class="qty-btn" onclick="changeQty('repeatQty',-1)">−</button>
           <div class="qty-val" id="repeatQty">1</div>
           <button class="qty-btn" onclick="changeQty('repeatQty',1)">+</button>
-          <button class="satuan-toggle" id="satuanToggleRepeat" onclick="toggleSatuan('repeat')">Satuan</button>
+          <button class="satuan-toggle" id="satuanToggleRepeat" onclick="toggleSatuan('repeat')">+ Satuan</button>
         </div>
-
         <div class="satuan-box" id="satuanBoxRepeat">
           <span class="satuan-label">🍩 Jumlah satuan:</span>
           <input class="satuan-input" id="satuanRepeat" type="number" min="1" value="1"
@@ -534,7 +532,7 @@ function resetItemForm(ctx) {
   }
 }
 
-  // ── TOGGLE INPUT SATUAN ──
+// ── TOGGLE INPUT SATUAN ──
 function toggleSatuan(ctx) {
   const box     = document.getElementById(ctx === 'main' ? 'satuanBoxMain'     : 'satuanBoxRepeat');
   const toggle  = document.getElementById(ctx === 'main' ? 'satuanToggleMain'  : 'satuanToggleRepeat');
@@ -561,11 +559,10 @@ function getSatuanQty(ctx) {
   return Math.max(1, val);
 }
 
-
 // ─────────────────────────────────────────────
 // PREVIEW ITEM YANG SEDANG DIPILIH
 // ─────────────────────────────────────────────
-function hitungTotalJS(tipePaket, qty) {
+function hitungTotalJS(tipePaket, qty, totalSatuan) {
   if (tipePaket === '3_10000') return qty * 10000;
   if (tipePaket === '6_20000') return qty * 20000;
   if (tipePaket === 'satuan')  return totalSatuan || Math.round(qty * 10000 / 3);
