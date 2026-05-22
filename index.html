@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Donat Tetangga</title>
  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.383.0/umd/lucide.min.js"></script>
   <style>
     *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
@@ -297,6 +298,50 @@
     .s4{ transform:rotate(270deg) translateY(-30px); }
     @keyframes spin{ 100%{ transform:rotate(360deg); } }
     .loading-text{ margin-top:16px; font-size:16px; font-weight:bold; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{
+  position:fixed; bottom:0; left:50%;
+  transform:translateX(-50%);
+  width:100%; max-width:480px;
+  background:white;
+  border-top:1px solid #f9a8d4;
+  display:flex;
+  box-shadow:0 -2px 12px rgba(0,0,0,0.06);
+  z-index:998;
+}
+.nav-btn{
+  flex:1; border:none; background:transparent;
+  padding:12px 0 10px; cursor:pointer;
+  display:flex; flex-direction:column;
+  align-items:center; gap:4px;
+  position:relative;
+}
+.nav-btn span{
+  font-size:11px; font-weight:700;
+  color:#c4a08a;
+  font-family:'Quicksand', Arial, sans-serif;
+}
+.nav-btn.active span{ color:#e0427f; }
+.nav-btn svg{ color:#c4a08a; }
+.nav-btn.active svg{ color:#e0427f; }
+.nav-badge{
+  position:absolute; top:8px;
+  right:calc(50% - 18px);
+  background:#e0427f; color:white;
+  font-size:10px; font-weight:800;
+  min-width:16px; height:16px;
+  border-radius:50px;
+  display:none; align-items:center;
+  justify-content:center;
+  padding:0 4px;
+  font-family:'Quicksand', Arial, sans-serif;
+}
+.nav-badge.show{ display:flex; }
+
+/* beri ruang di bawah agar konten tidak tertutup nav */
+.container{ padding-bottom:80px; }
+    
   </style>
 </head>
 <body>
@@ -312,6 +357,7 @@
 </div>
 
 <div class="container">
+  <div id="tabInput">
 
   <!-- ── FORM CUSTOMER BARU ── -->
   <div class="card">
@@ -374,16 +420,20 @@
   <div class="card">
     <button class="btn btn-secondary" style="margin-top:0" onclick="openRepeatModal()">REPEAT ORDER</button>
   </div>
+</div>
+</div>
 
-  <div id="queueContainer"></div>
-
-  <div style="
-    text-align:center;
-    padding:24px 16px 32px;
-    font-size:13px;
-    color:#c4a08a;
-  ">
-    <strong>DONAT TETANGGA</strong> &nbsp;•&nbsp; Manisnya sampai ke rumah kamu
+  <div id="tabQueue" style="display:none">
+    <div id="queueContainer"></div>
+    
+    <div style="
+      text-align:center;
+      padding:24px 16px 32px;
+      font-size:13px;
+      color:#c4a08a;
+    ">
+      <strong>DONAT TETANGGA</strong> &nbsp;•&nbsp; Manisnya sampai ke rumah kamu
+    </div>
   </div>
 
 </div>
@@ -797,6 +847,14 @@ async function loadQueue() {
 function renderQueue(data) {
   const container = document.getElementById('queueContainer');
   const pending   = data.filter(d => d.status !== 'Selesai');
+  // update badge
+const badge = document.getElementById('queueBadge');
+if (pending.length > 0) {
+  badge.textContent = pending.length;
+  badge.classList.add('show');
+} else {
+  badge.classList.remove('show');
+}
 
   if (pending.length === 0) {
     container.innerHTML = '<p style="text-align:center;color:#aaa;">Tidak ada queue</p>';
@@ -1067,12 +1125,35 @@ function updateClock(){
     days[now.getDay()] + ", " + now.getDate() + " " + months[now.getMonth()] + " " + now.getFullYear();
 }
 
+  // ── TAB NAVIGATION ──
+function switchTab(tab) {
+  const isInput = tab === 'input';
+  document.getElementById('tabInput').style.display = isInput ? '' : 'none';
+  document.getElementById('tabQueue').style.display = isInput ? 'none' : '';
+  document.getElementById('navInput').classList.toggle('active', isInput);
+  document.getElementById('navQueue').classList.toggle('active', !isInput);
+  lucide.createIcons();
+}
+
 window.onload = function(){
   loadQueue();
   updateClock();
   setInterval(updateClock, 1000);
+  lucide.createIcons();
 };
 </script>
+
+  <nav class="bottom-nav">
+  <button class="nav-btn active" id="navInput" onclick="switchTab('input')">
+    <i data-lucide="clipboard-list" width="24" height="24"></i>
+    <span>Input</span>
+  </button>
+  <button class="nav-btn" id="navQueue" onclick="switchTab('queue')">
+    <i data-lucide="shopping-bag" width="24" height="24"></i>
+    <span>Queue</span>
+    <div class="nav-badge" id="queueBadge"></div>
+  </button>
+</nav>
 
 </body>
 </html>
