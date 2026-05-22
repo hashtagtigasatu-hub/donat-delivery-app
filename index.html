@@ -824,7 +824,7 @@ function addItemToOrder(ctx) {
   const isMain = ctx === 'main';
   const varian = isMain ? selectedVarian : selectedRepeatVarian;
 
-  if (!varian) { alert('Pilih varian donat'); return; }
+  if (!varian) { showToast('Pilih dulu varian donatnya 😊'); return; }
 
   let item;
 
@@ -838,7 +838,7 @@ function addItemToOrder(ctx) {
     const tipe    = isMain ? selectedPaket : selectedRepeatPaket;
     const qtyElId = isMain ? 'formQty'     : 'repeatQty';
     const qty     = parseInt(document.getElementById(qtyElId).textContent);
-    if (!tipe) { showToast('Pilih paket'); return; }
+    if (!tipe) { showToast('Paketnya belum dipilih 🤭'); return; }
     item = { varian, tipePaket: tipe, jumlahPaket: qty };
   }
 
@@ -917,10 +917,10 @@ async function submitCustomer() {
   const maps   = document.getElementById('inputMaps').value.trim();  // opsional
 
   if (!nama || !wa || !alamat) {
-    showToast('Data belum lengkap'); return;
+    showToast('Data belum lengkap nih 😩'); return;
   }
   if (orderItems.length === 0) {
-    showToast('Tambahkan minimal 1 item pesanan'); return;
+    showToast('Tambahkan minimal 1 item pesanan ya 😊'); return;
   }
 
   showLoading();
@@ -957,7 +957,7 @@ async function submitCustomer() {
     loadQueue();
   } catch(err) {
     hideLoading();
-    showToast('Gagal koneksi: ' + err.message);
+    showToast('Gagal koneksi 😥: ' + err.message);
   }
 }
 
@@ -1064,7 +1064,7 @@ function getCardData(btn) {
 
 function openMapsFromCard(btn) {
   let url = getCardData(btn).maps;
-  if (!url) { showToast('Maps tidak tersedia'); return; }
+  if (!url) { showToast('Maps tidak tersedia 🧐'); return; }
   if (!url.startsWith('http')) url = 'https://' + url;
   window.open(url, '_blank');
 }
@@ -1086,7 +1086,7 @@ async function markDoneFromCard(btn) {
     if (r.success) { if (el) el.remove(); loadQueue(); }
     else { showToast(r.message); if (el) el.classList.remove('removing'); }
   } catch(err) {
-    showToast('Gagal koneksi');
+    showToast('Gagal koneksi 😥');
     if (el) el.classList.remove('removing');
   }
 }
@@ -1099,7 +1099,7 @@ async function reorder(queueID, direction) {
     const r = await post('reorderQueue', { queueID, direction });
     if (r.success) loadQueue();
     else showToast(r.message);
-  } catch(err) { showToast('Gagal reorder'); }
+  } catch(err) { showToast('Gagal reorder 😬'); }
 }
 
 // ─────────────────────────────────────────────
@@ -1167,8 +1167,8 @@ function selectRepeatCustomer(customerID, nama, alamat) {
 }
 
 async function confirmRepeat() {
-  if (!selectedRepeatCustomer)     { showToast('Pilih customer dulu'); return; }
-  if (repeatOrderItems.length === 0) { showToast('Tambahkan minimal 1 item pesanan'); return; }
+  if (!selectedRepeatCustomer)     { showToast('Pilih customer dulu ya 😊'); return; }
+  if (repeatOrderItems.length === 0) { showToast('Tambahkan minimal 1 item pesanan ya 😊'); return; }
 
   closeRepeatModal();
   showLoading();
@@ -1183,7 +1183,7 @@ async function confirmRepeat() {
     if (r.success) loadQueue();
   } catch(err) {
     hideLoading();
-    showToast('Gagal menambahkan repeat order');
+    showToast('Gagal menambahkan repeat order 😣');
   }
 }
 
