@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>🍩 Tetangga</title>
+  <title>Donat Tetangga</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
   <style>
     *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
     body{
       margin:0; background:#f3f4f6;
-      font-family:Arial,sans-serif; color:#111;
+      font-family:'Nunito', Arial, sans-serif; color:#111;
       max-width:480px; margin:auto; min-height:100vh;
     }
 
@@ -20,6 +22,7 @@
       box-shadow:0 2px 10px rgba(0,0,0,.05);
     }
     .title{ font-size:24px; font-weight:bold; }
+    .title{ font-family:'Pacifico', cursive; font-size:24px; font-weight:normal; }
 
     .header-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
     .header-datetime{ text-align:right; line-height:1.4; }
@@ -100,24 +103,34 @@
 
     /* ── INPUT SATUAN ── */
     .satuan-box{
-      display:none; align-items:center; gap:8px;
+      display:none; flex-direction:column; gap:8px;
       background:#f0fdf4; border-radius:12px;
-      padding:10px 14px; margin-top:10px;
+      padding:12px 14px; margin-top:10px;
     }
     .satuan-box.show{ display:flex; }
-    .satuan-label{ font-size:13px; color:#555; white-space:nowrap; }
+    .satuan-label{ font-size:13px; color:#555; font-weight:bold; }
+    .satuan-row{ display:flex; align-items:center; gap:10px; }
     .satuan-input{
       width:64px; border:2px solid #86efac;
-      background:white; padding:8px 10px;
-      border-radius:10px; font-size:16px;
+      background:white; padding:10px;
+      border-radius:10px; font-size:18px;
       font-weight:bold; text-align:center;
       color:#111;
     }
     .satuan-input:focus{ outline:none; border-color:#22c55e; }
+    /* tombol +/- satuan pakai class qty-btn yang sudah ada,
+       tapi warna hijau agar beda dari paket */
+    .satuan-qty-btn{
+      width:40px; height:40px; border:none; border-radius:50%;
+      background:#bbf7d0; font-size:20px; font-weight:bold;
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+      flex-shrink:0;
+    }
+    .satuan-qty-btn:active{ background:#86efac; }
     .satuan-toggle{
       border:2px solid #f9a8d4; background:white;
-      padding:8px 14px; border-radius:50px;
-      font-size:13px; font-weight:bold;
+      padding:12px 18px; border-radius:50px;
+      font-size:15px; font-weight:bold;
       cursor:pointer; color:#555; white-space:nowrap;
       transition:all 0.15s;
     }
@@ -291,7 +304,7 @@
 
 <div class="header">
   <div class="header-row">
-    <div class="title">Donat Tetangga 🍩</div>
+    <div class="title">🍩 TETANGGA</div>
     <div class="header-datetime">
       <div class="header-time" id="headerTime"></div>
       <div class="header-date" id="headerDate"></div>
@@ -313,7 +326,7 @@
     <div class="order-items" id="orderItems"></div>
 
     <!-- FORM TAMBAH ITEM -->
-    <button class="add-item-btn" onclick="showItemForm('main')">Tambah Item Pesanan</button>
+    <button class="add-item-btn" onclick="showItemForm('main')">TAMBAH PESANAN</button>
 
     <div class="item-form" id="itemFormMain">
       <div class="section-label" style="margin-top:0">Varian Donat</div>
@@ -337,8 +350,12 @@
       </div>
       <div class="satuan-box" id="satuanBoxMain">
         <span class="satuan-label">🍩 Jumlah satuan:</span>
-        <input class="satuan-input" id="satuanMain" type="number" min="1" value="1"
-          oninput="updateItemPreview('main')">
+        <div class="satuan-row">
+          <button class="satuan-qty-btn" onclick="changeSatuan('main',-1)">−</button>
+          <input class="satuan-input" id="satuanMain" type="number" min="1" value="1"
+            oninput="updateItemPreview('main')">
+          <button class="satuan-qty-btn" onclick="changeSatuan('main',1)">+</button>
+        </div>
       </div>
 
       <div class="price-preview" id="formPreview"></div>
@@ -351,12 +368,12 @@
 
     <div class="price-preview" id="totalPreview"></div>
 
-    <button class="btn btn-primary" onclick="submitCustomer()">Submit & Set Queue</button>
+    <button class="btn btn-primary" onclick="submitCustomer()">SUBMIT & SET QUEUE</button>
   </div>
 
   <!-- ── REPEAT ORDER ── -->
   <div class="card">
-    <button class="btn btn-secondary" style="margin-top:0" onclick="openRepeatModal()">Repeat Order</button>
+    <button class="btn btn-secondary" style="margin-top:0" onclick="openRepeatModal()">REPEAT ORDER</button>
   </div>
 
   <div id="queueContainer"></div>
@@ -412,8 +429,12 @@
         </div>
         <div class="satuan-box" id="satuanBoxRepeat">
           <span class="satuan-label">🍩 Jumlah satuan:</span>
-          <input class="satuan-input" id="satuanRepeat" type="number" min="1" value="1"
-            oninput="updateItemPreview('repeat')">
+          <div class="satuan-row">
+            <button class="satuan-qty-btn" onclick="changeSatuan('repeat',-1)">−</button>
+            <input class="satuan-input" id="satuanRepeat" type="number" min="1" value="1"
+              oninput="updateItemPreview('repeat')">
+            <button class="satuan-qty-btn" onclick="changeSatuan('repeat',1)">+</button>
+          </div>
         </div>
 
         <div class="price-preview" id="repeatPreview" style="margin-top:10px;"></div>
@@ -557,6 +578,13 @@ function isSatuanMode(ctx) {
 function getSatuanQty(ctx) {
   const val = parseInt(document.getElementById(ctx === 'main' ? 'satuanMain' : 'satuanRepeat').value) || 1;
   return Math.max(1, val);
+}
+
+function changeSatuan(ctx, delta) {
+  const el  = document.getElementById(ctx === 'main' ? 'satuanMain' : 'satuanRepeat');
+  const val = Math.max(1, (parseInt(el.value) || 1) + delta);
+  el.value  = val;
+  updateItemPreview(ctx);
 }
 
 // ─────────────────────────────────────────────
