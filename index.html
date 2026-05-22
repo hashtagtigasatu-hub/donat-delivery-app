@@ -1057,7 +1057,7 @@ if (pending.length > 0) {
   if (pending.length === 0) {
     container.innerHTML = `
       <div style="text-align:center;padding:40px 20px;">
-        <div style="font-size:64px;margin-bottom:16px;animation:bounce 1.5s ease infinite;">🥯</div>
+        <div style="font-size:64px;margin-bottom:16px;animation:bounce 1.5s ease infinite;">🍩</div>
         <div style="font-size:17px;font-weight:800;color:#8b5e3c;margin-bottom:6px;">Semua donat sudah terkirim!</div>
         <div style="font-size:13px;color:#b07a5a;">Queue kosong, waktunya bikin adonan baru 🥯</div>
       </div>
@@ -1443,29 +1443,31 @@ async function loadRingkasan() {
   `;
 
   try {
-    const data = await post('getQueue', {});
-    const semua = Array.isArray(data) ? data : [];
+    // ambil semua data termasuk yang selesai
+    const [queueData, doneData] = await Promise.all([
+      post('getQueue', {}),
+      post('getCompletedToday', {})
+    ]);
 
-    // filter yang sudah selesai hari ini
-    const today = new Date().toDateString();
-    const selesai = semua.filter(d => d.status === 'Selesai');
+    const selesai = Array.isArray(doneData) ? doneData : [];
 
-    // hitung statistik
     let totalPendapatan = 0, totalVanilla = 0, totalCokelat = 0;
     selesai.forEach(item => {
-      const items = item.items || [];
-      items.forEach(i => {
+      (item.items || []).forEach(i => {
         const total = hitungTotalJS(i.tipePaket, i.jumlahPaket, i.totalSatuan);
         totalPendapatan += total;
-        if (i.varian === 'Susu Vanilla') totalVanilla += i.jumlahPaket * (i.tipePaket === '3_10000' ? 3 : i.tipePaket === '6_20000' ? 6 : i.jumlahPaket);
-        if (i.varian === 'Susu Cokelat') totalCokelat += i.jumlahPaket * (i.tipePaket === '3_10000' ? 3 : i.tipePaket === '6_20000' ? 6 : i.jumlahPaket);
+        const jumlahDonat = i.tipePaket === '3_10000' ? i.jumlahPaket * 3
+                          : i.tipePaket === '6_20000' ? i.jumlahPaket * 6
+                          : i.jumlahPaket;
+        if (i.varian === 'Susu Vanilla') totalVanilla += jumlahDonat;
+        if (i.varian === 'Susu Cokelat') totalCokelat += jumlahDonat;
       });
     });
 
-    document.getElementById('statTotalOrder').textContent  = selesai.length;
-    document.getElementById('statPendapatan').textContent  = formatRp(totalPendapatan);
-    document.getElementById('statVanilla').textContent     = totalVanilla + ' 🍩';
-    document.getElementById('statCokelat').textContent     = totalCokelat + ' 🍩';
+    document.getElementById('statTotalOrder').textContent = selesai.length;
+    document.getElementById('statPendapatan').textContent = formatRp(totalPendapatan);
+    document.getElementById('statVanilla').textContent    = totalVanilla + ' 🍩';
+    document.getElementById('statCokelat').textContent    = totalCokelat + ' 🍩';
 
     if (selesai.length === 0) {
       riwayatEl.innerHTML = `
@@ -1479,9 +1481,11 @@ async function loadRingkasan() {
     }
 
     riwayatEl.innerHTML = selesai.reverse().map(item => {
-      const total = (item.items||[]).reduce((s,i) => s + hitungTotalJS(i.tipePaket, i.jumlahPaket, i.totalSatuan), 0);
-      const detail = (item.items||[]).map(i => {
-        const lb = i.tipePaket === 'satuan' ? 'satuan' : i.tipePaket === '3_10000' ? '3 donat' : '6 donat';
+      const total = (item.items || []).reduce((s, i) =>
+        s + hitungTotalJS(i.tipePaket, i.jumlahPaket, i.totalSatuan), 0);
+      const detail = (item.items || []).map(i => {
+        const lb = i.tipePaket === 'satuan' ? 'satuan'
+                 : i.tipePaket === '3_10000' ? '3 donat' : '6 donat';
         return `${i.varian} ${i.jumlahPaket}× ${lb}`;
       }).join(', ');
       return `
