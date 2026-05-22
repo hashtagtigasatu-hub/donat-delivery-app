@@ -782,7 +782,10 @@ function renderQueue(data) {
       ? '<span class="ongkir-tag ongkir-gratis">🎉 Gratis Ongkir</span>'
       : '<span class="ongkir-tag ongkir-bayar">🛵 Ongkir ' + formatRp(ongkirVal) + '</span>';
 
-    const totalHarga = parseInt(item.totalHarga) || 0;
+    // Hitung ulang dari items agar satuan ikut terhitung
+    const totalHarga = (item.items && item.items.length > 0)
+      ? item.items.reduce((s, i) => s + hitungTotalJS(i.tipePaket, i.jumlahPaket, i.totalSatuan), 0)
+      : parseInt(item.totalHarga) || 0;
     const distLabel  = parseFloat(item.distance) >= 9999 ? 'Tanpa Maps' : item.distance + ' KM';
 
     // Render detail items
@@ -979,7 +982,7 @@ function openWA(number, queue, nama, items, ongkir) {
   let grandTotal  = 0;
   (items || []).forEach(item => {
     const lb    = item.tipePaket === 'satuan' ? 'satuan' : item.tipePaket === '3_10000' ? '3 donat' : '6 donat';
-    const total = hitungTotalJS(item.tipePaket, item.jumlahPaket, item.totalSatuan);
+    const total = hitungTotalJS(item.tipePaket, parseInt(item.jumlahPaket), item.totalSatuan);
     grandTotal += total;
     detailLines += `\n🍩 ${item.varian} · ${item.jumlahPaket}× paket ${lb} = ${formatRp(total)}`;
   });
