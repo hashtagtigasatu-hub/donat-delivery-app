@@ -404,13 +404,13 @@
 .toast{
   position:fixed; top:100px; left:50%;
   transform:translateX(-50%) translateY(-20px);
-  background:#8b5e3c; color:white;
+  background:#e0427f; color:white;
   padding:12px 24px; border-radius:50px;
   font-size:14px; font-weight:700;
   z-index:999999; opacity:0;
   transition:opacity 0.3s, transform 0.3s;
   max-width:320px; text-align:center;
-  box-shadow:0 4px 16px rgba(0,0,0,0.15);
+  box-shadow:0 4px 16px rgba(224,66,127,0.3);
   pointer-events:none;
 }
 .toast.show{
@@ -428,7 +428,25 @@
   0%   { box-shadow: 0 0 0 0 rgba(249,168,212,0.7); }
   70%  { box-shadow: 0 0 0 10px rgba(249,168,212,0); }
   100% { box-shadow: 0 0 0 0 rgba(249,168,212,0); }
-}  
+}
+
+    /* ── SLIDE UP ANIMATION ── */
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.item-form.show {
+  display: block;
+  animation: slideUp 0.3s ease forwards;
+}
+.repeat-order-box.show {
+  display: block;
+  animation: slideUp 0.3s ease forwards;
+}
+.satuan-box.show {
+  display: flex;
+  animation: slideUp 0.25s ease forwards;
+}
     
   </style>
 </head>
@@ -437,7 +455,14 @@
 <div class="header">
   <div class="header-row">
     <div>
-      <div class="title">🍩 Tetangga </div>
+      <div class="title" style="display:flex;align-items:center;gap:8px;">
+        <div id="headerDonut" style="position:relative;width:32px;height:32px;flex-shrink:0;">
+          <div id="headerDonutBody" style="width:32px;height:32px;background:#8b5e3c;border-radius:50%;position:relative;">
+      <div style="position:absolute;width:13px;height:13px;background:#ffe4ef;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+    </div>
+  </div>
+  Tetangga
+</div>
       <div class="subtitle">Manisnya sampai ke rumah kamu</div>
     </div>
     <div class="header-datetime">
@@ -1347,6 +1372,88 @@ window.onload = function(){
   setInterval(updateClock, 1000);
   lucide.createIcons();
 };
+
+  // ── MINI DONUT HEADER ──
+(function initHeaderDonut() {
+  const COLORS = ['#f9a8d4','#86efac','#93c5fd','#fde68a','#c4b5fd','#fb923c','#fca5a5','#a5f3fc'];
+  const body   = document.getElementById('headerDonutBody');
+  const wrap   = document.getElementById('headerDonut');
+  if (!body || !wrap) return;
+
+  const INNER_R = 6, OUTER_R = 14, MAX = 30, SPAWN_MS = 200, RPM = 20;
+  const stuck = [];
+  let colorIdx = 0, donutAngle = 0, lastTime = null, nextSpawnAt = 0;
+
+  function inRing(x, y) {
+    const d = Math.sqrt(x*x + y*y);
+    return d >= INNER_R && d <= OUTER_R;
+  }
+  function overlaps(x, y, size) {
+    for (const s of stuck) {
+      if (s.phase !== 'stuck') continue;
+      const dx = s.x-x, dy = s.y-y, min = (s.size+size)/2 + 0.5;
+      if (dx*dx + dy*dy < min*min) return true;
+    }
+    return false;
+  }
+  function findSlot() {
+    for (let i = 0; i < 40; i++) {
+      const angle  = Math.random() * 360;
+      const radius = INNER_R + Math.sqrt(Math.random()) * (OUTER_R - INNER_R);
+      const rad    = angle * Math.PI / 180;
+      const x      = Math.cos(rad) * radius;
+      const y      = Math.sin(rad) * radius;
+      const size   = 1 + Math.floor(Math.random() * 2);
+      if (inRing(x, y) && !overlaps(x, y, size)) return { angle, radius, x, y, size };
+    }
+    return null;
+  }
+  function easeOut(t) { return 1-(1-t)*(1-t); }
+  function spawnSprinkle(slot) {
+    const { angle, radius, x, y, size } = slot;
+    const half = size/2, color = COLORS[colorIdx++ % COLORS.length];
+    const el = document.createElement('div');
+    el.style.cssText = `position:absolute;border-radius:50%;width:${size}px;height:${size}px;margin:${-half}px 0 0 ${-half}px;top:50%;left:50%;background:${color};opacity:0;transform:translate(${x}px,${y-14}px) scale(0.3);`;
+    wrap.appendChild(el);
+    return { el, angle, radius, x, y, size, phase:'falling', t:0, stuckAngle:0 };
+  }
+
+  function tick(ts) {
+    if (!lastTime) lastTime = ts;
+    const dt = Math.min((ts-lastTime)/1000, 0.05);
+    lastTime = ts;
+    donutAngle = (donutAngle + RPM*6*dt) % 360;
+
+    // rotate body
+    body.style.transform = `rotate(${donutAngle}deg)`;
+
+    if (stuck.length < MAX && ts > nextSpawnAt) {
+      const slot = findSlot();
+      if (slot) {
+        stuck.push(spawnSprinkle(slot));
+        nextSpawnAt = ts + SPAWN_MS + (Math.random()*80 - 40);
+      } else {
+        nextSpawnAt = ts + 1000;
+      }
+    }
+    for (const sp of stuck) {
+      if (sp.phase === 'falling') {
+        sp.t = Math.min(sp.t + dt*2.5, 1);
+        const p = easeOut(sp.t);
+        sp.el.style.transform = `translate(${sp.x}px,${sp.y - 14*(1-p)}px) scale(${0.3+0.7*p})`;
+        sp.el.style.opacity   = Math.min(sp.t*3, 1);
+        if (sp.t >= 1) { sp.phase = 'stuck'; sp.stuckAngle = sp.angle; }
+      } else {
+        const wa  = (sp.stuckAngle + donutAngle) % 360;
+        const rad = wa * Math.PI / 180;
+        sp.el.style.transform = `translate(${Math.cos(rad)*sp.radius}px,${Math.sin(rad)*sp.radius}px) scale(1)`;
+        sp.el.style.opacity   = '1';
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
 
   function showToast(msg, duration = 2500) {
   const el = document.getElementById('toast');
