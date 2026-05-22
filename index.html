@@ -309,16 +309,17 @@
   display:flex;
   box-shadow:0 -2px 12px rgba(0,0,0,0.06);
   z-index:998;
+  padding-bottom:env(safe-area-inset-bottom); /* iPhone notch */
 }
 .nav-btn{
   flex:1; border:none; background:transparent;
-  padding:12px 0 10px; cursor:pointer;
+  padding:16px 0 14px; cursor:pointer;
   display:flex; flex-direction:column;
-  align-items:center; gap:4px;
+  align-items:center; gap:6px;
   position:relative;
 }
 .nav-btn span{
-  font-size:11px; font-weight:700;
+  font-size:13px; font-weight:700;
   color:#c4a08a;
   font-family:'Quicksand', Arial, sans-serif;
 }
@@ -326,8 +327,9 @@
 .nav-btn svg{ color:#c4a08a; }
 .nav-btn.active svg{ color:#e0427f; }
 .nav-badge{
-  position:absolute; top:8px;
-  right:calc(50% - 18px);
+  position:absolute;
+  top:10px;
+  right:calc(50% - 22px);
   background:#e0427f; color:white;
   font-size:10px; font-weight:800;
   min-width:16px; height:16px;
@@ -340,7 +342,16 @@
 .nav-badge.show{ display:flex; }
 
 /* beri ruang di bawah agar konten tidak tertutup nav */
-.container{ padding-bottom:80px; }
+.container{ padding-bottom:90px; }
+    
+#tabQueue{ padding-top:4px; }
+
+  .subtitle{
+  font-size:11px;
+  color:#b07a5a;
+  margin-top:2px;
+  font-family:'Quicksand', Arial, sans-serif;
+} 
     
   </style>
 </head>
@@ -348,7 +359,10 @@
 
 <div class="header">
   <div class="header-row">
-    <div class="title">🍩 Tetangga</div>
+    <div>
+      <div class="title">🍩 Tetangga </div>
+      <div class="subtitle">Manisnya sampai ke rumah kamu</div>
+    </div>
     <div class="header-datetime">
       <div class="header-time" id="headerTime"></div>
       <div class="header-date" id="headerDate"></div>
@@ -424,18 +438,8 @@
 </div>
 
   <div id="tabQueue" style="display:none">
-    <div id="queueContainer"></div>
-    
-    <div style="
-      text-align:center;
-      padding:24px 16px 32px;
-      font-size:13px;
-      color:#c4a08a;
-    ">
-      <strong>DONAT TETANGGA</strong> &nbsp;•&nbsp; Manisnya sampai ke rumah kamu
-    </div>
+    <div id="queueContainer"></div>  
   </div>
-
 </div>
 
 <!-- ── MODAL REPEAT ORDER ── -->
