@@ -17,10 +17,14 @@
 
     .header{
       background:#ffe4ef; padding:20px;
-      position:sticky; top:0; z-index:999;
+      position:fixed; top:0; left:50%;
+      transform:translateX(-50%);
+      width:100%; max-width:480px;
+      z-index:999;
       border-bottom:1px solid #f9a8d4;
       box-shadow:0 2px 10px rgba(0,0,0,.05);
     }
+    
     .title{ font-size:24px; font-weight:bold; }
     .title{ font-size:24px; font-weight:800; font-family:'Baloo 2', cursive; }
 
@@ -309,14 +313,15 @@
   display:flex;
   box-shadow:0 -2px 12px rgba(0,0,0,0.06);
   z-index:998;
-  padding-bottom:env(safe-area-inset-bottom); /* iPhone notch */
+  height:64px;  /* tinggi fixed */
+  align-items:center;
 }
 .nav-btn{
   flex:1; border:none; background:transparent;
-  padding:16px 0 14px; cursor:pointer;
+  padding:0; height:100%; cursor:pointer;
   display:flex; flex-direction:column;
-  align-items:center; gap:6px;
-  position:relative;
+  align-items:center; justify-content:center;
+  gap:4px; position:relative;
 }
 .nav-btn span{
   font-size:13px; font-weight:700;
@@ -342,9 +347,12 @@
 .nav-badge.show{ display:flex; }
 
 /* beri ruang di bawah agar konten tidak tertutup nav */
-.container{ padding-bottom:90px; }
+.container{ 
+  padding-bottom:72px;
+  padding-top:90px;  /* ← sesuaikan jika header lebih tinggi/pendek */
+}
     
-#tabQueue{ padding-top:4px; }
+#tabQueue{ padding-top:16px; }
 
   .subtitle{
   font-size:11px;
@@ -438,6 +446,16 @@
 </div>
 
   <div id="tabQueue" style="display:none">
+
+    <!-- JUDUL QUEUE LIST -->
+  <div style="
+    padding:16px 16px 8px;
+    font-size:18px;
+    font-weight:800;
+    color:#8b5e3c;
+    font-family:'Baloo 2', cursive;
+  ">Queue List</div>
+    
     <div id="queueContainer"></div>  
   </div>
 </div>
