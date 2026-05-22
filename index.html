@@ -1064,6 +1064,9 @@ function selectRepeatCustomer(customerID, nama, alamat) {
   document.getElementById('repeatCustomerName').textContent = '🍩 ' + nama;
   document.getElementById('repeatOrderBox').classList.add('show');
   document.getElementById('customerList').scrollTop = 0;
+  setTimeout(() => {
+    document.getElementById('repeatOrderBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
 }
 
 async function confirmRepeat() {
