@@ -416,6 +416,10 @@
 .toast.show{
   opacity:1;
   transform:translateX(-50%) translateY(0);
+}
+
+  @keyframes spin {
+  to { transform: rotate(360deg); }
 } 
     
   </style>
@@ -511,6 +515,32 @@
     color:#8b5e3c;
     font-family:'Baloo 2', cursive;
   ">Queue List</div>
+
+    <div style="
+  padding:16px 16px 8px;
+  font-size:18px;
+  font-weight:800;
+  color:#8b5e3c;
+  font-family:'Baloo 2', cursive;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+">
+  Queue List
+  <button onclick="refreshQueue()" id="refreshBtn" style="
+    border:none;
+    background:#ffe4ef;
+    color:#8b5e3c;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    font-size:18px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  "><i data-lucide="refresh-cw" width="18" height="18"></i></button>
+</div>
     
     <div id="queueContainer"></div>  
   </div>
@@ -1406,6 +1436,13 @@ window.onload = function(){
   el.textContent = msg;
   el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), duration);
+}
+
+  async function refreshQueue() {
+  const btn = document.getElementById('refreshBtn');
+  btn.style.animation = 'spin 0.6s linear';
+  await loadQueue();
+  setTimeout(() => btn.style.animation = '', 600);
 }
   
 </script>
