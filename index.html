@@ -418,9 +418,17 @@
   transform:translateX(-50%) translateY(0);
 }
 
-  @keyframes spin {
-  to { transform: rotate(360deg); }
-} 
+  @keyframes btnBounce {
+  0%,100% { transform: translateY(0); }
+  30%     { transform: translateY(-6px); }
+  60%     { transform: translateY(-3px); }
+}
+
+@keyframes btnPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(249,168,212,0.7); }
+  70%  { box-shadow: 0 0 0 10px rgba(249,168,212,0); }
+  100% { box-shadow: 0 0 0 0 rgba(249,168,212,0); }
+}  
     
   </style>
 </head>
@@ -1347,9 +1355,9 @@ window.onload = function(){
   setTimeout(() => el.classList.remove('show'), duration);
 }
 
-  async function refreshQueue() {
+ async function refreshQueue() {
   const btn = document.getElementById('refreshBtn');
-  btn.style.animation = 'spin 0.6s linear';
+  btn.style.animation = 'btnBounce 0.5s ease, btnPulse 0.6s ease';
   await loadQueue();
   setTimeout(() => btn.style.animation = '', 600);
 }
