@@ -1179,8 +1179,107 @@ async function post(action, data) {
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
-function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+
+// ── DONUT LOADER SPRINKLE ──
+let donutAnimID = null;
+
+function startDonutLoader() {
+  const COLORS = [
+    '#f9a8d4','#86efac','#93c5fd','#fde68a',
+    '#c4b5fd','#fb923c','#fca5a5','#a5f3fc',
+    '#d9f99d','#e9d5ff','#fed7aa','#bfdbfe',
+    '#f0abfc','#6ee7b7','#7dd3fc','#fbbf24',
+  ];
+  const INNER_R = 17, OUTER_R = 38, MAX = 120, SPAWN_MS = 120, RPM = 15;
+  const loader  = document.getElementById('donutLoader');
+  if (!loader) return;
+
+  loader.querySelectorAll('.sprinkle').forEach(el => el.remove());
+
+  const stuck = [];
+  let colorIdx = 0, donutAngle = 0, lastTime = null, nextSpawnAt = 0;
+
+  function inRing(x, y) {
+    const d = Math.sqrt(x*x + y*y);
+    return d >= INNER_R && d <= OUTER_R;
+  }
+  function overlaps(x, y, size) {
+    for (const s of stuck) {
+      if (s.phase !== 'stuck') continue;
+      const dx = s.x-x, dy = s.y-y, min = (s.size+size)/2 + 0.8;
+      if (dx*dx + dy*dy < min*min) return true;
+    }
+    return false;
+  }
+  function findSlot() {
+    for (let i = 0; i < 60; i++) {
+      const angle  = Math.random() * 360;
+      const radius = INNER_R + Math.sqrt(Math.random()) * (OUTER_R - INNER_R);
+      const rad    = angle * Math.PI / 180;
+      const x      = Math.cos(rad) * radius;
+      const y      = Math.sin(rad) * radius;
+      const size   = 2 + Math.floor(Math.random() * 3);
+      if (inRing(x, y) && !overlaps(x, y, size)) return { angle, radius, x, y, size };
+    }
+    return null;
+  }
+  function easeOut(t) { return 1-(1-t)*(1-t); }
+  function spawnSprinkle(slot) {
+    const { angle, radius, x, y, size } = slot;
+    const half = size/2, color = COLORS[colorIdx++ % COLORS.length];
+    const el = document.createElement('div');
+    el.className = 'sprinkle';
+    el.style.cssText = `width:${size}px;height:${size}px;margin:${-half}px 0 0 ${-half}px;background:${color};opacity:0;transform:translate(${x}px,${y-36}px) scale(0.3);`;
+    loader.appendChild(el);
+    return { el, angle, radius, x, y, size, phase:'falling', t:0, stuckAngle:0 };
+  }
+  function tick(ts) {
+    if (!lastTime) lastTime = ts;
+    const dt = Math.min((ts-lastTime)/1000, 0.05);
+    lastTime = ts;
+    donutAngle = (donutAngle + RPM*6*dt) % 360;
+    if (stuck.length < MAX && ts > nextSpawnAt) {
+      const slot = findSlot();
+      if (slot) {
+        stuck.push(spawnSprinkle(slot));
+        nextSpawnAt = ts + SPAWN_MS + (Math.random()*60 - 30);
+      } else {
+        nextSpawnAt = ts + 300;
+      }
+    }
+    for (const sp of stuck) {
+      if (sp.phase === 'falling') {
+        sp.t = Math.min(sp.t + dt*2.5, 1);
+        const p = easeOut(sp.t);
+        sp.el.style.transform = `translate(${sp.x}px,${sp.y - 36*(1-p)}px) scale(${0.3 + 0.7*p})`;
+        sp.el.style.opacity   = Math.min(sp.t*3, 1);
+        if (sp.t >= 1) { sp.phase = 'stuck'; sp.stuckAngle = sp.angle; }
+      } else {
+        const wa  = (sp.stuckAngle + donutAngle) % 360;
+        const rad = wa * Math.PI / 180;
+        sp.el.style.transform = `translate(${Math.cos(rad)*sp.radius}px,${Math.sin(rad)*sp.radius}px) scale(1)`;
+        sp.el.style.opacity   = '1';
+      }
+    }
+    donutAnimID = requestAnimationFrame(tick);
+  }
+  donutAnimID = requestAnimationFrame(tick);
+}
+
+function stopDonutLoader() {
+  if (donutAnimID) { cancelAnimationFrame(donutAnimID); donutAnimID = null; }
+  const loader = document.getElementById('donutLoader');
+  if (loader) loader.querySelectorAll('.sprinkle').forEach(el => el.remove());
+}
+
+function showLoading() {
+  document.getElementById('loadingOverlay').style.display = 'flex';
+  startDonutLoader();
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').style.display = 'none';
+  stopDonutLoader();
+}
 
 function updateClock(){
   const now  = new Date();
