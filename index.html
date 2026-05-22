@@ -313,15 +313,15 @@
   display:flex;
   box-shadow:0 -2px 12px rgba(0,0,0,0.06);
   z-index:998;
-  height:64px;  /* tinggi fixed */
-  align-items:center;
+  height:72px;
+  align-items:stretch;
 }
 .nav-btn{
   flex:1; border:none; background:transparent;
-  padding:0; height:100%; cursor:pointer;
+  padding:10px 0 8px; cursor:pointer;
   display:flex; flex-direction:column;
   align-items:center; justify-content:center;
-  gap:4px; position:relative;
+  gap:5px; position:relative;
 }
 .nav-btn span{
   font-size:13px; font-weight:700;
@@ -333,11 +333,11 @@
 .nav-btn.active svg{ color:#e0427f; }
 .nav-badge{
   position:absolute;
-  top:10px;
-  right:calc(50% - 22px);
+  top:6px;
+  right:calc(50% - 24px);
   background:#e0427f; color:white;
   font-size:10px; font-weight:800;
-  min-width:16px; height:16px;
+  min-width:18px; height:18px;
   border-radius:50px;
   display:none; align-items:center;
   justify-content:center;
@@ -348,11 +348,15 @@
 
 /* beri ruang di bawah agar konten tidak tertutup nav */
 .container{ 
-  padding-bottom:72px;
-  padding-top:90px;  /* ← sesuaikan jika header lebih tinggi/pendek */
+  padding-bottom:80px;
+  padding-top:90px;
 }
     
-#tabQueue{ padding-top:16px; }
+#tabQueue{ 
+  padding-top:90px;
+  padding-left:16px;
+  padding-right:16px;
+}
 
   .subtitle{
   font-size:11px;
@@ -442,7 +446,6 @@
   <div class="card">
     <button class="btn btn-secondary" style="margin-top:0" onclick="openRepeatModal()">REPEAT ORDER</button>
   </div>
-</div>
 </div>
 
   <div id="tabQueue" style="display:none">
