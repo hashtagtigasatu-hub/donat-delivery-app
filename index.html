@@ -602,9 +602,6 @@ function showItemForm(ctx) {
   const formId = ctx === 'main' ? 'itemFormMain' : 'itemFormRepeat';
   document.getElementById(formId).classList.add('show');
 }
-  setTimeout(() => {
-    document.getElementById(formId).scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 100);
   
 function hideItemForm(ctx) {
   const formId = ctx === 'main' ? 'itemFormMain' : 'itemFormRepeat';
