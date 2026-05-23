@@ -477,6 +477,17 @@
 .riwayat-nama { font-weight: 800; font-size: 14px; color: #111; }
 .riwayat-detail { font-size: 12px; color: #888; margin-top: 2px; }
 .riwayat-harga { font-weight: 800; font-size: 14px; color:#059669; }
+
+  @keyframes slideUpIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideDownIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.queue-item.reorder-up   { animation: slideUpIn   0.35s ease forwards; }
+.queue-item.reorder-down { animation: slideDownIn 0.35s ease forwards; }
     
   </style>
 </head>
@@ -500,6 +511,24 @@
       <div class="header-date" id="headerDate"></div>
     </div>
   </div>
+</div>
+
+  <!-- REFRESH INDICATOR -->
+<div id="refreshIndicator" style="
+  position:fixed; top:76px; left:50%; transform:translateX(-50%);
+  background:white; border-radius:50px; padding:8px 16px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.1);
+  display:none; align-items:center; gap:10px;
+  z-index:997;
+">
+  <div id="refreshMiniDonut" style="position:relative;width:24px;height:24px;flex-shrink:0;">
+    <div id="refreshDonutBody" style="
+      width:24px;height:24px;background:#8b5e3c;border-radius:50%;position:relative;
+    ">
+      <div style="position:absolute;width:10px;height:10px;background:#ffe4ef;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+    </div>
+  </div>
+  <span style="font-size:13px;font-weight:700;color:#e0427f;">Memperbarui...</span>
 </div>
 
 <div class="container">
@@ -1174,9 +1203,19 @@ async function markDoneFromCard(btn) {
 async function reorder(queueID, direction) {
   try {
     const r = await post('reorderQueue', { queueID, direction });
-    if (r.success) loadQueue();
-    else showToast(r.message);
-  } catch(err) { showToast('Gagal reorder 😬'); }
+    if (r.success) {
+      await loadQueue();
+      // tambahkan animasi pada card yang baru dipindah
+      const card = document.getElementById('qi-' + queueID);
+      if (card) {
+        const cls = direction === 'up' ? 'reorder-up' : 'reorder-down';
+        card.classList.add(cls);
+        setTimeout(() => card.classList.remove(cls), 350);
+      }
+    } else {
+      showToast(r.message);
+    }
+  } catch(err) { showToast('Gagal reorder'); }
 }
 
 // ─────────────────────────────────────────────
@@ -1434,6 +1473,7 @@ function updateClock(){
  
   // ── RINGKASAN HARI INI ──
 async function loadRingkasan() {
+  showRefreshIndicator();
   const riwayatEl = document.getElementById('riwayatContainer');
   riwayatEl.innerHTML = `
     <div class="skeleton-card">
@@ -1443,13 +1483,8 @@ async function loadRingkasan() {
   `;
 
   try {
-    // ambil semua data termasuk yang selesai
-    const [queueData, doneData] = await Promise.all([
-      post('getQueue', {}),
-      post('getCompletedToday', {})
-    ]);
-
-    const selesai = Array.isArray(doneData) ? doneData : [];
+    const doneData = await post('getCompletedToday', {});
+    const selesai  = Array.isArray(doneData) ? doneData : [];
 
     let totalPendapatan = 0, totalVanilla = 0, totalCokelat = 0;
     selesai.forEach(item => {
@@ -1502,6 +1537,8 @@ async function loadRingkasan() {
 
   } catch(err) {
     riwayatEl.innerHTML = '<p style="text-align:center;color:#f87171;">Gagal memuat data 😢</p>';
+  } finally {
+    setTimeout(hideRefreshIndicator, 400);
   }
 }
   
@@ -1622,10 +1659,113 @@ window.onload = function(){      // ← terpisah, berdiri sendiri
 }
 
  async function refreshQueue() {
-  const btn = document.getElementById('refreshBtn');
-  btn.style.animation = 'btnBounce 0.5s ease, btnPulse 0.6s ease';
+  showRefreshIndicator();
   await loadQueue();
-  setTimeout(() => btn.style.animation = '', 600);
+  setTimeout(hideRefreshIndicator, 400);
+}
+
+
+  // ── REFRESH MINI DONUT ──
+let refreshDonutAnimID = null;
+
+function startRefreshDonut() {
+  const COLORS = ['#f9a8d4','#86efac','#93c5fd','#fde68a','#c4b5fd','#fb923c'];
+  const wrap   = document.getElementById('refreshMiniDonut');
+  const body   = document.getElementById('refreshDonutBody');
+  if (!wrap || !body) return;
+
+  wrap.querySelectorAll('.sprinkle').forEach(el => el.remove());
+
+  const stuck = [];
+  let colorIdx = 0, donutAngle = 0, lastTime = null, nextSpawnAt = 0;
+  const INNER_R = 5, OUTER_R = 11, MAX = 20, SPAWN_MS = 150, RPM = 25;
+
+  function inRing(x, y) {
+    const d = Math.sqrt(x*x + y*y);
+    return d >= INNER_R && d <= OUTER_R;
+  }
+  function overlaps(x, y, size) {
+    for (const s of stuck) {
+      if (s.phase !== 'stuck') continue;
+      const dx = s.x-x, dy = s.y-y, min = (s.size+size)/2 + 0.5;
+      if (dx*dx + dy*dy < min*min) return true;
+    }
+    return false;
+  }
+  function findSlot() {
+    for (let i = 0; i < 30; i++) {
+      const angle  = Math.random() * 360;
+      const radius = INNER_R + Math.sqrt(Math.random()) * (OUTER_R - INNER_R);
+      const rad    = angle * Math.PI / 180;
+      const x      = Math.cos(rad) * radius;
+      const y      = Math.sin(rad) * radius;
+      const size   = 1 + Math.floor(Math.random() * 2);
+      if (inRing(x, y) && !overlaps(x, y, size)) return { angle, radius, x, y, size };
+    }
+    return null;
+  }
+  function easeOut(t) { return 1-(1-t)*(1-t); }
+  function spawnSprinkle(slot) {
+    const { angle, radius, x, y, size } = slot;
+    const half = size/2, color = COLORS[colorIdx++ % COLORS.length];
+    const el = document.createElement('div');
+    el.className = 'sprinkle';
+    el.style.cssText = `width:${size}px;height:${size}px;margin:${-half}px 0 0 ${-half}px;background:${color};opacity:0;transform:translate(${x}px,${y-12}px) scale(0.3);`;
+    wrap.appendChild(el);
+    return { el, angle, radius, x, y, size, phase:'falling', t:0, stuckAngle:0 };
+  }
+  function tick(ts) {
+    if (!lastTime) lastTime = ts;
+    const dt = Math.min((ts-lastTime)/1000, 0.05);
+    lastTime = ts;
+    donutAngle = (donutAngle + RPM*6*dt) % 360;
+    body.style.transform = `rotate(${donutAngle}deg)`;
+
+    if (stuck.length < MAX && ts > nextSpawnAt) {
+      const slot = findSlot();
+      if (slot) {
+        stuck.push(spawnSprinkle(slot));
+        nextSpawnAt = ts + SPAWN_MS + (Math.random()*60 - 30);
+      } else {
+        nextSpawnAt = ts + 500;
+      }
+    }
+    for (const sp of stuck) {
+      if (sp.phase === 'falling') {
+        sp.t = Math.min(sp.t + dt*2.5, 1);
+        const p = easeOut(sp.t);
+        sp.el.style.transform = `translate(${sp.x}px,${sp.y - 12*(1-p)}px) scale(${0.3+0.7*p})`;
+        sp.el.style.opacity   = Math.min(sp.t*3, 1);
+        if (sp.t >= 1) { sp.phase = 'stuck'; sp.stuckAngle = sp.angle; }
+      } else {
+        const wa  = (sp.stuckAngle + donutAngle) % 360;
+        const rad = wa * Math.PI / 180;
+        sp.el.style.transform = `translate(${Math.cos(rad)*sp.radius}px,${Math.sin(rad)*sp.radius}px) scale(1)`;
+        sp.el.style.opacity   = '1';
+      }
+    }
+    refreshDonutAnimID = requestAnimationFrame(tick);
+  }
+  refreshDonutAnimID = requestAnimationFrame(tick);
+}
+
+function stopRefreshDonut() {
+  if (refreshDonutAnimID) { cancelAnimationFrame(refreshDonutAnimID); refreshDonutAnimID = null; }
+  const wrap = document.getElementById('refreshMiniDonut');
+  if (wrap) wrap.querySelectorAll('.sprinkle').forEach(el => el.remove());
+  const body = document.getElementById('refreshDonutBody');
+  if (body) body.style.transform = '';
+}
+
+function showRefreshIndicator() {
+  const el = document.getElementById('refreshIndicator');
+  el.style.display = 'flex';
+  startRefreshDonut();
+}
+function hideRefreshIndicator() {
+  const el = document.getElementById('refreshIndicator');
+  el.style.display = 'none';
+  stopRefreshDonut();
 }
   
 </script>
