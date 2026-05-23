@@ -538,9 +538,9 @@
 
   <!-- ── FORM CUSTOMER BARU ── -->
   <div class="card">
-    <input class="input" id="inputNama" placeholder="Nama Customer" autocapitalize="words">
+    <input class="input" id="inputNama" placeholder="Nama Customer" oninput="autoCapitalize(this,'words')">
     <input class="input" id="inputWA" placeholder="Nomor WhatsApp" oninput="autoFormatWA(this)" inputmode="numeric">
-    <textarea class="input" id="inputAlamat" placeholder="Alamat" autocapitalize="sentences"></textarea>
+    <textarea class="input" id="inputAlamat" placeholder="Alamat" oninput="autoCapitalize(this,'sentences')"></textarea>
     <input class="input" id="inputMaps"   placeholder="Link Google Maps (opsional)">
 
     <!-- DAFTAR ITEM ORDER -->
@@ -1798,6 +1798,23 @@ function hideRefreshIndicator() {
     val = '62' + val;
   }
   el.value = val;
+}
+
+  function autoCapitalize(el, mode) {
+  const pos = el.selectionStart;
+  let val = el.value;
+
+  if (mode === 'words') {
+    // setiap awal kata kapital
+    val = val.replace(/(?:^|\s)\S/g, c => c.toUpperCase());
+  } else if (mode === 'sentences') {
+    // awal kalimat saja kapital
+    val = val.replace(/(^\s*\w|[.!?]\s*\w)/g, c => c.toUpperCase());
+  }
+
+  el.value = val;
+  // kembalikan posisi kursor
+  el.setSelectionRange(pos, pos);
 }
   
 </script>
