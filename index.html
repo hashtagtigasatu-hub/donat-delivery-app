@@ -538,9 +538,9 @@
 
   <!-- ── FORM CUSTOMER BARU ── -->
   <div class="card">
-    <input class="input" id="inputNama"   placeholder="Nama Customer">
-    <input class="input" id="inputWA"     placeholder="Nomor WhatsApp">
-    <textarea class="input" id="inputAlamat" placeholder="Alamat"></textarea>
+    <input class="input" id="inputNama" placeholder="Nama Customer" autocapitalize="words">
+    <input class="input" id="inputWA" placeholder="Nomor WhatsApp" oninput="autoFormatWA(this)" inputmode="numeric">
+    <textarea class="input" id="inputAlamat" placeholder="Alamat" autocapitalize="sentences"></textarea>
     <input class="input" id="inputMaps"   placeholder="Link Google Maps (opsional)">
 
     <!-- DAFTAR ITEM ORDER -->
@@ -1786,6 +1786,18 @@ function hideRefreshIndicator() {
     el.style.display = 'none';
     stopRefreshDonut();
   }, 300);
+}
+
+  function autoFormatWA(el) {
+  let val = el.value.replace(/[^0-9]/g, '');
+  if (val.startsWith('08')) {
+    val = '62' + val.substring(1);
+  } else if (val.startsWith('628')) {
+    // sudah benar, biarkan
+  } else if (val.startsWith('8')) {
+    val = '62' + val;
+  }
+  el.value = val;
 }
   
 </script>
