@@ -1309,6 +1309,8 @@ async function confirmRepeat() {
 // WHATSAPP — multi item
 // ─────────────────────────────────────────────
 function openWA(number, queue, nama, items, ongkir) {
+  // bersihkan strip, spasi, karakter non-angka
+  number = number.toString().replace(/[^0-9]/g, '');
   const ongkirText = ongkir === 0 ? 'GRATIS 🎉' : formatRp(ongkir);
 
   let detailLines = '';
